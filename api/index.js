@@ -95,6 +95,7 @@ fastify.post('/outbound-call', async (request, reply) => {
     reply.code(500).send({
       success: false,
       error: 'Failed to initiate call',
+      details: error
     });
   }
 });
