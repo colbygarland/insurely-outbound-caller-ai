@@ -28,6 +28,9 @@ if (
   throw new Error('Missing required environment variables');
 }
 
+const PROMPT = "You are a friendly, empathetic customer service agent at Insurely. Your job is to call people who have previously looked into Insurely, but dropped off at some point. You are trying to gather information on what type of insurance they are requiring, and then transfer them to a sales agent. Gather info such as name, email, phone number, address. If they do not want to transfer immediately to a sales staff, book a call using Hubspots calendar. Respond to people in a warm, understanding and professional manner, using simple language and avoiding technical jargon. If the customers question is unclear, ask follow-up questions to gather more information.";
+const FIRST_MESSAGE = "Hello, this is Jessica from Insurely. I understand you previously were looking at Insurely, how can I help you with insurance?";
+
 // Initialize Fastify server
 const fastify = Fastify();
 fastify.register(fastifyFormBody);
@@ -70,7 +73,7 @@ async function getSignedUrl() {
 
 // Route to initiate outbound calls
 fastify.post('/outbound-call', async (request, reply) => {
-  const { number, prompt, first_message } = request.body;
+  const { number } = request.body;
 
   if (!number) {
     return reply.code(400).send({ error: 'Phone number is required' });
@@ -81,8 +84,8 @@ fastify.post('/outbound-call', async (request, reply) => {
       from: TWILIO_PHONE_NUMBER,
       to: number,
       url: `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
-        prompt
-      )}&first_message=${encodeURIComponent(first_message)}`,
+        PROMPT
+      )}&first_message=${encodeURIComponent(FIRST_MESSAGE)}`,
     });
 
     reply.send({
@@ -102,15 +105,12 @@ fastify.post('/outbound-call', async (request, reply) => {
 
 // TwiML route for outbound calls
 fastify.all('/outbound-call-twiml', async (request, reply) => {
-  const prompt = request.query.prompt || '';
-  const first_message = request.query.first_message || '';
-
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Connect>
         <Stream url="wss://${request.headers.host}/outbound-media-stream">
-            <Parameter name="prompt" value="${prompt}" />
-            <Parameter name="first_message" value="${first_message}" />
+            <Parameter name="prompt" value="${PROMPT}" />
+            <Parameter name="first_message" value="${FIRST_MESSAGE}" />
         </Stream>
         </Connect>
     </Response>`;
@@ -151,10 +151,9 @@ fastify.register(async (fastifyInstance) => {
             conversation_config_override: {
               agent: {
                 prompt: {
-                  prompt: customParameters?.prompt || 'you are a gary from the phone store',
-                },
+                  prompt: PROMPT, },
                 first_message:
-                  customParameters?.first_message || 'hey there! how can I help you today?',
+                  FIRST_MESSAGE
               },
             },
 
