@@ -60,6 +60,34 @@
     fastify-plugin "^5.0.0"
     ws "^8.16.0"
 
+"@types/dotenv@^8.2.3":
+  version "8.2.3"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/dotenv/-/dotenv-8.2.3.tgz#c97b3c5b2e97ff3873793a000999e86cd66ff354"
+  integrity sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw==
+  dependencies:
+    dotenv "*"
+
+"@types/node@*":
+  version "22.13.10"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/node/-/node-22.13.10.tgz#df9ea358c5ed991266becc3109dc2dc9125d77e4"
+  integrity sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==
+  dependencies:
+    undici-types "~6.20.0"
+
+"@types/twilio@^3.19.3":
+  version "3.19.3"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/twilio/-/twilio-3.19.3.tgz#dda809e4626bf187a4c5028517aea74f3c2fa8e1"
+  integrity sha512-W53Z0TDCu6clZ5CzTWHRPnpQAad+AANglx6WiQ4Mkxxw21o4BYBx5EhkfR6J4iYqY58rtWB3r8kDGJ4y1uTUGQ==
+  dependencies:
+    twilio "*"
+
+"@types/ws@^8.18.0":
+  version "8.18.0"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/ws/-/ws-8.18.0.tgz#8a2ec491d6f0685ceaab9a9b7ff44146236993b5"
+  integrity sha512-8svvI3hMyvN0kKCJMvTJP/x6Y/EoQbepff882wL+Sn5QsXb3etnamgrJq4isrBxSJj5L2AuXcI0+bgkoAXGUJw==
+  dependencies:
+    "@types/node" "*"
+
 abstract-logging@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/abstract-logging/-/abstract-logging-2.0.1.tgz#6b0c371df212db7129b57d2e7fcf282b8bf1c839"
@@ -171,7 +199,7 @@ dequal@^2.0.3:
   resolved "https://registry.yarnpkg.com/dequal/-/dequal-2.0.3.tgz#2644214f1997d39ed0ee0ece72335490a7ac67be"
   integrity sha512-0je+qPKHEMohvfRTCEo3CrPG6cAzAYgmzKyxRiYSSDkS6eGJdyVJm7WaYA5ECaAD9wLB2T4EEeymA5aFVcYXCA==
 
-dotenv@^16.4.7:
+dotenv@*, dotenv@^16.4.7:
   version "16.4.7"
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-16.4.7.tgz#0e20c5b82950140aa99be360a8a5f52335f53c26"
   integrity sha512-47qPchRCykZC03FhkYAhrvwU4xDBFIj1QPqaarj6mdM/hgUzfPHcpkHJOn3mJAufFeeAxAzeGsr5X0M4k6fLZQ==
@@ -560,6 +588,11 @@ pino@^9.0.0:
     sonic-boom "^4.0.1"
     thread-stream "^3.0.0"
 
+prettier@^3.5.3:
+  version "3.5.3"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/prettier/-/prettier-3.5.3.tgz#4fc2ce0d657e7a02e602549f053b239cb7dfe1b5"
+  integrity sha512-QQtaxnoDJeAkDvDKWCLiwIXkTgRhwYDEQCghU9Z6q03iyek/rxRh/2lC3HB7P8sWT2xC/y5JDctPLBIGzHKbhw==
+
 process-warning@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/process-warning/-/process-warning-4.0.1.tgz#5c1db66007c67c756e4e09eb170cdece15da32fb"
@@ -729,6 +762,19 @@ toad-cache@^3.7.0:
   resolved "https://registry.yarnpkg.com/toad-cache/-/toad-cache-3.7.0.tgz#b9b63304ea7c45ec34d91f1d2fa513517025c441"
   integrity sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw==
 
+twilio@*:
+  version "5.5.0"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/twilio/-/twilio-5.5.0.tgz#2f10ec3759ba34790bc963291155a7a1ab2b275e"
+  integrity sha512-iyI9kP3ZSrffUb9XApRNd35MMsV4Yp3OZM3Ewg7JNt5FvscsZZel/vCaxTlJ9D5kss0FKdeeu2c+GnaUK6Z1VA==
+  dependencies:
+    axios "^1.7.8"
+    dayjs "^1.11.9"
+    https-proxy-agent "^5.0.0"
+    jsonwebtoken "^9.0.2"
+    qs "^6.9.4"
+    scmp "^2.1.0"
+    xmlbuilder "^13.0.2"
+
 twilio@^5.4.5:
   version "5.4.5"
   resolved "https://registry.yarnpkg.com/twilio/-/twilio-5.4.5.tgz#b475aefc3b22ee0e98c485fd719f2f1f59d53cad"
@@ -741,6 +787,11 @@ twilio@^5.4.5:
     qs "^6.9.4"
     scmp "^2.1.0"
     xmlbuilder "^13.0.2"
+
+undici-types@~6.20.0:
+  version "6.20.0"
+  resolved "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/undici-types/-/undici-types-6.20.0.tgz#8171bf22c1f588d1554d55bf204bc624af388433"
+  integrity sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==
 
 util-deprecate@^1.0.1:
   version "1.0.2"

@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "dev": "node api/index.js",
+    "dev": "node api/index",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -19,5 +19,15 @@
     "twilio": "^5.4.5",
     "ws": "^8.18.1"
   },
-  "packageManager": "yarn@1.22.22+sha1.ac34549e6aa8e7ead463a7407e1c7390f61a6610"
+  "devDependencies": {
+    "@types/dotenv": "^8.2.3",
+    "@types/twilio": "^3.19.3",
+    "@types/ws": "^8.18.0",
+    "prettier": "^3.5.3",
+    "@types/bun": "latest"
+  },
+  "private": true,
+  "peerDependencies": {
+    "typescript": "^5"
+  }
 }
