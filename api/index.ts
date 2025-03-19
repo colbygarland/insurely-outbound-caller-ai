@@ -1,10 +1,9 @@
-import fastifyFormBody from '@fastify/formbody'
-import fastifyWs from '@fastify/websocket'
-import Fastify from 'fastify'
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { getSignedUrl } from '../utils'
+import { getSignedUrl } from '../src/utils'
+import { FIRST_MESSAGE, PORT, PROMPT } from '../src/constants'
+import { createServer } from '../src/server'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -18,34 +17,14 @@ if (!ELEVENLABS_API_KEY || !ELEVENLABS_AGENT_ID || !TWILIO_ACCOUNT_SID || !TWILI
   throw new Error('Missing required environment variables')
 }
 
-const PROMPT = `You are a friendly, empathetic customer service agent at Insurely. 
-  Your job is to call people who have previously looked into Insurely, but dropped off at some point. 
-  You are trying to gather information on what type of insurance they are requiring, and then transfer them to a sales agent. 
-  Gather info such as name, email, phone number, address. 
-  If they do not want to transfer immediately to a sales staff, book a call using Hubspot's calendar. 
-  Respond to people in a warm, understanding and professional manner, using simple language and avoiding technical jargon. 
-  If the customers question is unclear, ask follow-up questions to gather more information. 
-  If you cannot help the person, or they wish to speak to a person, forward the call to ${TWILIO_PHONE_NUMBER}`
-const FIRST_MESSAGE =
-  'Hello, this is Jessica from Insurely. I understand you previously were looking at Insurely, how can I help you with insurance?'
-
 // Initialize Fastify server
-const fastify = Fastify()
-fastify.register(fastifyFormBody)
-fastify.register(fastifyWs)
-
-const PORT = (process.env.PORT as unknown as number) || 8000
-
-// Root route for health check
-fastify.get('/', async (_, reply) => {
-  reply.send({ message: 'Server is running' })
-})
+const server = createServer()
 
 // Initialize Twilio client
 const twilioClient = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 // Route to initiate outbound calls
-fastify.post('/outbound-call', async (request, reply) => {
+server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
   const { number } = request.body
 
@@ -78,7 +57,7 @@ fastify.post('/outbound-call', async (request, reply) => {
 })
 
 // TwiML route for outbound calls
-fastify.all('/outbound-call-twiml', async (request, reply) => {
+server.all('/outbound-call-twiml', async (request, reply) => {
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Connect>
@@ -93,7 +72,7 @@ fastify.all('/outbound-call-twiml', async (request, reply) => {
 })
 
 // WebSocket route for handling media streams
-fastify.register(async fastifyInstance => {
+server.register(async fastifyInstance => {
   fastifyInstance.get('/outbound-media-stream', { websocket: true }, (ws, req) => {
     console.info('[Server] Twilio connected to outbound media stream')
 
@@ -283,10 +262,15 @@ fastify.register(async fastifyInstance => {
 })
 
 // Start the Fastify server
-fastify.listen({ port: PORT }, err => {
+server.listen({ port: PORT }, err => {
   if (err) {
     console.error('Error starting server:', err)
     process.exit(1)
   }
   console.log(`[Server] Listening on port ${PORT}`)
+})
+
+// Root route for health check
+server.get('/', async (_, reply) => {
+  reply.send({ message: 'Server is running' })
 })
