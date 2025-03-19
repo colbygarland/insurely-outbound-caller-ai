@@ -6,6 +6,7 @@
       "dependencies": {
         "@fastify/formbody": "^8.0.2",
         "@fastify/websocket": "^11.0.2",
+        "@hubspot/api-client": "^12.0.1",
         "dotenv": "^16.4.7",
         "fastify": "^5.2.1",
         "twilio": "^5.4.5",
@@ -40,11 +41,15 @@
 
     "@fastify/websocket": ["@fastify/websocket@11.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@fastify/websocket/-/websocket-11.0.2.tgz", { "dependencies": { "duplexify": "^4.1.3", "fastify-plugin": "^5.0.0", "ws": "^8.16.0" } }, "sha512-1oyJkNSZNJGjo/A5fXvlpEcm1kTBD91nRAN9lA7RNVsVNsyC5DuhOXdNL9/4UawVe7SKvzPT/QVI4RdtE9ylnA=="],
 
+    "@hubspot/api-client": ["@hubspot/api-client@12.0.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@hubspot/api-client/-/api-client-12.0.1.tgz", { "dependencies": { "@types/node-fetch": "^2.5.7", "bottleneck": "^2.19.5", "es6-promise": "^4.2.4", "form-data": "^2.5.0", "lodash.get": "^4.4.2", "lodash.merge": "^4.6.2", "node-fetch": "^2.6.0", "url-parse": "^1.4.3" } }, "sha512-lMxDEuhaP1KDxo0Z/t+3xAT/wzVaQCZ9ThSewj9qCMkhBMYA2ABWLOY/I+huQCERuMqkqwmMBx/NOCspBlGQGg=="],
+
     "@types/bun": ["@types/bun@1.2.5", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/bun/-/bun-1.2.5.tgz", { "dependencies": { "bun-types": "1.2.5" } }, "sha512-w2OZTzrZTVtbnJew1pdFmgV99H0/L+Pvw+z1P67HaR18MHOzYnTYOi6qzErhK8HyT+DB782ADVPPE92Xu2/Opg=="],
 
     "@types/dotenv": ["@types/dotenv@8.2.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/dotenv/-/dotenv-8.2.3.tgz", { "dependencies": { "dotenv": "*" } }, "sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw=="],
 
     "@types/node": ["@types/node@22.13.10", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/node/-/node-22.13.10.tgz", { "dependencies": { "undici-types": "~6.20.0" } }, "sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw=="],
+
+    "@types/node-fetch": ["@types/node-fetch@2.6.12", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/node-fetch/-/node-fetch-2.6.12.tgz", { "dependencies": { "@types/node": "*", "form-data": "^4.0.0" } }, "sha512-8nneRWKCg3rMtF69nLQJnOYUcbafYeFSjqkw3jCRLsqkWFlHaoQrr5mXmofFGOx3DKn7UfmBMyov8ySvLRVldA=="],
 
     "@types/twilio": ["@types/twilio@3.19.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/twilio/-/twilio-3.19.3.tgz", { "dependencies": { "twilio": "*" } }, "sha512-W53Z0TDCu6clZ5CzTWHRPnpQAad+AANglx6WiQ4Mkxxw21o4BYBx5EhkfR6J4iYqY58rtWB3r8kDGJ4y1uTUGQ=="],
 
@@ -65,6 +70,8 @@
     "avvio": ["avvio@9.1.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/avvio/-/avvio-9.1.0.tgz", { "dependencies": { "@fastify/error": "^4.0.0", "fastq": "^1.17.1" } }, "sha512-fYASnYi600CsH/j9EQov7lECAniYiBFiiAtBNuZYLA2leLe9qOvZzqYHFjtIj6gD2VMoMLP14834LFWvr4IfDw=="],
 
     "axios": ["axios@1.8.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/axios/-/axios-1.8.3.tgz", { "dependencies": { "follow-redirects": "^1.15.6", "form-data": "^4.0.0", "proxy-from-env": "^1.1.0" } }, "sha512-iP4DebzoNlP/YN2dpwCgb8zoCmhtkajzS48JvwmkSkXvPI3DHc7m+XYL5tGnSlJtR6nImXZmdCuN5aP8dh1d8A=="],
+
+    "bottleneck": ["bottleneck@2.19.5", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/bottleneck/-/bottleneck-2.19.5.tgz", {}, "sha512-VHiNCbI1lKdl44tGrhNfU3lup0Tj/ZBMJB5/2ZbNXRCPuRCO7ed2mgcK4r17y+KB2EfuYuRaVlwNbAeaWGSpbw=="],
 
     "buffer-equal-constant-time": ["buffer-equal-constant-time@1.0.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/buffer-equal-constant-time/-/buffer-equal-constant-time-1.0.1.tgz", {}, "sha512-zRpUiDwd/xk6ADqPMATG8vc9VPrkck7T07OIx0gnjmJAnHnTVXNQG3vfvWNuiZIkwu9KrKdA1iJKfsfTVxE6NA=="],
 
@@ -104,6 +111,8 @@
 
     "es-set-tostringtag": ["es-set-tostringtag@2.1.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/es-set-tostringtag/-/es-set-tostringtag-2.1.0.tgz", { "dependencies": { "es-errors": "^1.3.0", "get-intrinsic": "^1.2.6", "has-tostringtag": "^1.0.2", "hasown": "^2.0.2" } }, "sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA=="],
 
+    "es6-promise": ["es6-promise@4.2.8", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/es6-promise/-/es6-promise-4.2.8.tgz", {}, "sha512-HJDGx5daxeIvxdBxvG2cb9g4tEvwIk3i8+nhX0yGrYmZUzbkdg8QbDevheDB8gd0//uPj4c1EQua8Q+MViT0/w=="],
+
     "fast-decode-uri-component": ["fast-decode-uri-component@1.0.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/fast-decode-uri-component/-/fast-decode-uri-component-1.0.1.tgz", {}, "sha512-WKgKWg5eUxvRZGwW8FvfbaH7AXSh2cL+3j5fMGzUMCxWBJ3dV3a7Wz8y2f/uQ0e3B6WmodD3oS54jTQ9HVTIIg=="],
 
     "fast-deep-equal": ["fast-deep-equal@3.1.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/fast-deep-equal/-/fast-deep-equal-3.1.3.tgz", {}, "sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q=="],
@@ -126,7 +135,7 @@
 
     "follow-redirects": ["follow-redirects@1.15.9", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/follow-redirects/-/follow-redirects-1.15.9.tgz", {}, "sha512-gew4GsXizNgdoRyqmyfMHyAmXsZDk6mHkSxZFCzW9gwlbtOW44CDtYavM+y+72qD/Vq2l550kMF52DT8fOLJqQ=="],
 
-    "form-data": ["form-data@4.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/form-data/-/form-data-4.0.2.tgz", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "mime-types": "^2.1.12" } }, "sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w=="],
+    "form-data": ["form-data@2.5.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/form-data/-/form-data-2.5.3.tgz", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "mime-types": "^2.1.35", "safe-buffer": "^5.2.1" } }, "sha512-XHIrMD0NpDrNM/Ckf7XJiBbLl57KEhT3+i3yY+eWm+cqYZJQTZrKo8Y8AWKnuV5GT4scfuUGt9LzNoIx3dU1nQ=="],
 
     "function-bind": ["function-bind@1.1.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/function-bind/-/function-bind-1.1.2.tgz", {}, "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA=="],
 
@@ -160,6 +169,8 @@
 
     "light-my-request": ["light-my-request@6.6.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/light-my-request/-/light-my-request-6.6.0.tgz", { "dependencies": { "cookie": "^1.0.1", "process-warning": "^4.0.0", "set-cookie-parser": "^2.6.0" } }, "sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A=="],
 
+    "lodash.get": ["lodash.get@4.4.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.get/-/lodash.get-4.4.2.tgz", {}, "sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ=="],
+
     "lodash.includes": ["lodash.includes@4.3.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.includes/-/lodash.includes-4.3.0.tgz", {}, "sha512-W3Bx6mdkRTGtlJISOvVD/lbqjTlPPUDTMnlXZFnVwi9NKJ6tiAk6LVdlhZMm17VZisqhKcgzpO5Wz91PCt5b0w=="],
 
     "lodash.isboolean": ["lodash.isboolean@3.0.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.isboolean/-/lodash.isboolean-3.0.3.tgz", {}, "sha512-Bz5mupy2SVbPHURB98VAcw+aHh4vRV5IPNhILUCsOzRmsTmSQ17jIuqopAentWoehktxGd9e/hbIXq980/1QJg=="],
@@ -172,6 +183,8 @@
 
     "lodash.isstring": ["lodash.isstring@4.0.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.isstring/-/lodash.isstring-4.0.1.tgz", {}, "sha512-0wJxfxH1wgO3GrbuP+dTTk7op+6L41QCXbGINEmD+ny/G/eCqGzxyCsh7159S+mgDDcoarnBw6PC1PS5+wUGgw=="],
 
+    "lodash.merge": ["lodash.merge@4.6.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.merge/-/lodash.merge-4.6.2.tgz", {}, "sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ=="],
+
     "lodash.once": ["lodash.once@4.1.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lodash.once/-/lodash.once-4.1.1.tgz", {}, "sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg=="],
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/math-intrinsics/-/math-intrinsics-1.1.0.tgz", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
@@ -181,6 +194,8 @@
     "mime-types": ["mime-types@2.1.35", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/mime-types/-/mime-types-2.1.35.tgz", { "dependencies": { "mime-db": "1.52.0" } }, "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw=="],
 
     "ms": ["ms@2.1.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/ms/-/ms-2.1.3.tgz", {}, "sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA=="],
+
+    "node-fetch": ["node-fetch@2.7.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/node-fetch/-/node-fetch-2.7.0.tgz", { "dependencies": { "whatwg-url": "^5.0.0" }, "peerDependencies": { "encoding": "^0.1.0" }, "optionalPeers": ["encoding"] }, "sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A=="],
 
     "object-inspect": ["object-inspect@1.13.4", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/object-inspect/-/object-inspect-1.13.4.tgz", {}, "sha512-W67iLl4J2EXEGTbfeHCffrjDfitvLANg0UlX3wFUUSTx92KXRFegMHUVgSqE+wvhAbi4WqjGg9czysTV2Epbew=="],
 
@@ -202,6 +217,8 @@
 
     "qs": ["qs@6.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/qs/-/qs-6.14.0.tgz", { "dependencies": { "side-channel": "^1.1.0" } }, "sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w=="],
 
+    "querystringify": ["querystringify@2.2.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/querystringify/-/querystringify-2.2.0.tgz", {}, "sha512-FIqgj2EUvTa7R50u0rGsyTftzjYmv/a3hO345bZNrqabNqjtgiDMgmo4mkUjd+nzU5oF3dClKqFIPUKybUyqoQ=="],
+
     "quick-format-unescaped": ["quick-format-unescaped@4.0.4", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/quick-format-unescaped/-/quick-format-unescaped-4.0.4.tgz", {}, "sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg=="],
 
     "readable-stream": ["readable-stream@3.6.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/readable-stream/-/readable-stream-3.6.2.tgz", { "dependencies": { "inherits": "^2.0.3", "string_decoder": "^1.1.1", "util-deprecate": "^1.0.1" } }, "sha512-9u/sniCrY3D5WdsERHzHE4G2YCXqoG5FTHUiCC4SIbr6XcLZBY05ya9EKjYek9O5xOAwjGq+1JdGBAS7Q9ScoA=="],
@@ -209,6 +226,8 @@
     "real-require": ["real-require@0.2.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/real-require/-/real-require-0.2.0.tgz", {}, "sha512-57frrGM/OCTLqLOAh0mhVA9VBMHd+9U7Zb2THMGdBUoZVOtGbJzjxsYGDJ3A9AYYCP4hn6y1TVbaOfzWtm5GFg=="],
 
     "require-from-string": ["require-from-string@2.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/require-from-string/-/require-from-string-2.0.2.tgz", {}, "sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw=="],
+
+    "requires-port": ["requires-port@1.0.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/requires-port/-/requires-port-1.0.0.tgz", {}, "sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ=="],
 
     "ret": ["ret@0.5.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/ret/-/ret-0.5.0.tgz", {}, "sha512-I1XxrZSQ+oErkRR4jYbAyEEu2I0avBvvMM5JN+6EBprOGRCs63ENqZ3vjavq8fBw2+62G5LF5XelKwuJpcvcxw=="],
 
@@ -250,19 +269,31 @@
 
     "toad-cache": ["toad-cache@3.7.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/toad-cache/-/toad-cache-3.7.0.tgz", {}, "sha512-/m8M+2BJUpoJdgAHoG+baCwBT+tf2VraSfkBgl0Y00qIWt41DJ8R5B8nsEw0I58YwF5IZH6z24/2TobDKnqSWw=="],
 
+    "tr46": ["tr46@0.0.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/tr46/-/tr46-0.0.3.tgz", {}, "sha512-N3WMsuqV66lT30CrXNbEjx4GEwlow3v6rr4mCcv6prnfwhS01rkgyFdjPNBYd9br7LpXV1+Emh01fHnq2Gdgrw=="],
+
     "twilio": ["twilio@5.5.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/twilio/-/twilio-5.5.0.tgz", { "dependencies": { "axios": "^1.7.8", "dayjs": "^1.11.9", "https-proxy-agent": "^5.0.0", "jsonwebtoken": "^9.0.2", "qs": "^6.9.4", "scmp": "^2.1.0", "xmlbuilder": "^13.0.2" } }, "sha512-iyI9kP3ZSrffUb9XApRNd35MMsV4Yp3OZM3Ewg7JNt5FvscsZZel/vCaxTlJ9D5kss0FKdeeu2c+GnaUK6Z1VA=="],
 
     "typescript": ["typescript@5.8.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/typescript/-/typescript-5.8.2.tgz", { "bin": { "tsc": "bin/tsc", "tsserver": "bin/tsserver" } }, "sha512-aJn6wq13/afZp/jT9QZmwEjDqqvSGp1VT5GVg+f/t6/oVyrgXM6BY1h9BRh/O5p3PlUPAe+WuiEZOmb/49RqoQ=="],
 
     "undici-types": ["undici-types@6.20.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/undici-types/-/undici-types-6.20.0.tgz", {}, "sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg=="],
 
+    "url-parse": ["url-parse@1.5.10", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/url-parse/-/url-parse-1.5.10.tgz", { "dependencies": { "querystringify": "^2.1.1", "requires-port": "^1.0.0" } }, "sha512-WypcfiRhfeUP9vvF0j6rw0J3hrWrw6iZv3+22h6iRMJ/8z1Tj6XfLP4DsUix5MhMPnXpiHDoKyoZ/bdCkwBCiQ=="],
+
     "util-deprecate": ["util-deprecate@1.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/util-deprecate/-/util-deprecate-1.0.2.tgz", {}, "sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw=="],
+
+    "webidl-conversions": ["webidl-conversions@3.0.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/webidl-conversions/-/webidl-conversions-3.0.1.tgz", {}, "sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ=="],
+
+    "whatwg-url": ["whatwg-url@5.0.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/whatwg-url/-/whatwg-url-5.0.0.tgz", { "dependencies": { "tr46": "~0.0.3", "webidl-conversions": "^3.0.0" } }, "sha512-saE57nupxk6v3HY35+jzBwYa0rKSy0XR8JSxZPwgLr7ys0IBzhGviA1/TUGJLmSVqs8pb9AnvICXEuOHLprYTw=="],
 
     "wrappy": ["wrappy@1.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/wrappy/-/wrappy-1.0.2.tgz", {}, "sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ=="],
 
     "ws": ["ws@8.18.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/ws/-/ws-8.18.1.tgz", { "peerDependencies": { "bufferutil": "^4.0.1", "utf-8-validate": ">=5.0.2" }, "optionalPeers": ["bufferutil", "utf-8-validate"] }, "sha512-RKW2aJZMXeMxVpnZ6bck+RswznaxmzdULiBr6KY7XkTnW8uvt0iT9H5DkHUChXrc+uurzwa0rVI16n/Xzjdz1w=="],
 
     "xmlbuilder": ["xmlbuilder@13.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/xmlbuilder/-/xmlbuilder-13.0.2.tgz", {}, "sha512-Eux0i2QdDYKbdbA6AM6xE4m6ZTZr4G4xF9kahI2ukSEMCzwce2eX9WlTI5J3s+NU7hpasFsr8hWIONae7LluAQ=="],
+
+    "@types/node-fetch/form-data": ["form-data@4.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/form-data/-/form-data-4.0.2.tgz", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "mime-types": "^2.1.12" } }, "sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w=="],
+
+    "axios/form-data": ["form-data@4.0.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/form-data/-/form-data-4.0.2.tgz", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "mime-types": "^2.1.12" } }, "sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w=="],
 
     "bun-types/@types/ws": ["@types/ws@8.5.14", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/ws/-/ws-8.5.14.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-bd/YFLW+URhBzMXurx7lWByOu+xzU9+kb3RboOteXYDfW+tr+JZa99OyNmPINEGB/ahzKrEuc8rcv4gnpJmxTw=="],
   }
