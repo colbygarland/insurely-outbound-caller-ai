@@ -57,7 +57,41 @@ export const HUBSPOT = {
       return null
     }
   },
-  bookMeeting: async () => {
+  bookMeeting: async ({
+    firstName,
+    lastName,
+    startTime,
+    email,
+  }: {
+    firstName: string
+    lastName: string
+    startTime: string
+    email: string
+  }) => {
     // Pretty sure its this: https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
+    const body = {
+      duration: 30,
+      firstName,
+      lastName,
+      likelyAvailable: [],
+      legalConsent: [],
+      communication: '',
+      consented: true,
+      startTime,
+      locale: 'en',
+      slug: '',
+      email,
+    }
+    try {
+      const response = await hubspotClient.apiRequest({
+        method: 'POST',
+        path: '/scheduler/v3/meetings/meeting-links/book',
+        body,
+      })
+      console.log(`[Hubspot API] response = ${response}`)
+    } catch (error) {
+      console.error(`[Hubspot] error with getClientDetails(): ${JSON.stringify(error)}`)
+      return null
+    }
   },
 } as const
