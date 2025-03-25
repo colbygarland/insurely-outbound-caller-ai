@@ -4,6 +4,7 @@ import dotenv from 'dotenv'
 import { getSignedUrl, handleTransferCall } from '../src/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
+import { HUBSPOT } from '../src/hubspot'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -350,4 +351,25 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     </Response>`
 
   reply.type('text/xml').send(twimlResponse)
+})
+
+/** 
+ * curl -X POST localhost:8000/hubspot \
+-H "Content-Type: application/json" \
+-d '{
+    "firstName": "Colby",
+    "lastName": "Garland",
+    "phone": "780-882-4742",
+    "email": "colbyrobyn2017@gmail.com"
+    }' | jq
+ */
+server.all('/hubspot', async (request: any) => {
+  console.log(`[Hubspot] testing hubspot`)
+  const { phone, email, firstName, lastName } = request.body
+  if (!phone || !email || !firstName || !lastName) {
+    throw new Error('One of [phone, email, firstName, lastName] is required')
+  }
+  const response = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
+  console.log(`[Hubspot] Response: ${JSON.stringify(response, null, 2)}`)
+  return response
 })
