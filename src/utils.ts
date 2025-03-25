@@ -1,4 +1,5 @@
-import type { Twilio } from 'twilio'
+import type { Twilio as TwilioInterface } from 'twilio'
+import Twilio from 'twilio'
 
 // Helper function to get signed URL for authenticated conversations
 export async function getSignedUrl(agentId: string, apiKey: string) {
@@ -26,7 +27,11 @@ export async function getSignedUrl(agentId: string, apiKey: string) {
   }
 }
 
-export async function handleTransferCall(callSid: string, twilioClient: Twilio) {
+export async function handleTransferCall(
+  callSid: string,
+  twilioClient: TwilioInterface,
+  activeCalls: Map<string, unknown>,
+) {
   const forwardPhone = process.env.SUPPORT_PHONE_NUMBER
   if (!forwardPhone) {
     throw new Error('Missing phone number to forward call to')
@@ -41,7 +46,7 @@ export async function handleTransferCall(callSid: string, twilioClient: Twilio) 
     const callerNumber = call.to
 
     // Move caller to a conference room
-    const customerTwiml = new twilioClient.twiml.VoiceResponse()
+    const customerTwiml = new Twilio.twiml.VoiceResponse()
     customerTwiml.say('Please hold while we connect you to an agent.')
     customerTwiml.dial().conference(
       {
@@ -76,12 +81,12 @@ export async function handleTransferCall(callSid: string, twilioClient: Twilio) 
 
     console.log(`[Transfer] Outbound call to agent created: ${agentCall.sid}`)
 
-    // activeCalls.set(callSid, {
-    //   status: 'transferring',
-    //   conferenceName,
-    //   agentCallSid: agentCall.sid,
-    //   agentNumber,
-    // })
+    activeCalls.set(callSid, {
+      status: 'transferring',
+      conferenceName,
+      agentCallSid: agentCall.sid,
+      forwardPhone,
+    })
 
     return { success: true, agentCallSid: agentCall.sid }
   } catch (error) {
