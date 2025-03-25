@@ -1,8 +1,8 @@
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { getSignedUrl } from '../src/utils'
-import { FIRST_MESSAGE, PORT, PROMPT } from '../src/constants'
+import { getSignedUrl, handleTransferCall } from '../src/utils'
+import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 
 // Load environment variables from .env file
@@ -78,7 +78,7 @@ server.register(async fastifyInstance => {
 
     // Variables to track the call
     let streamSid: string | null = null
-    let callSid = null
+    let callSid: string | null = null
     let elevenLabsWs: WebSocket | null = null
     let customParameters = null // Add this to store parameters
 
@@ -97,10 +97,6 @@ server.register(async fastifyInstance => {
           // Send initial configuration with prompt and first message
           const initialConfig = {
             type: 'conversation_initiation_client_data',
-            dynamic_variables: {
-              user_name: 'Angelo',
-              user_id: 1234,
-            },
             conversation_config_override: {
               agent: {
                 prompt: {
@@ -120,7 +116,7 @@ server.register(async fastifyInstance => {
           elevenLabsWs?.send(JSON.stringify(initialConfig))
         })
 
-        elevenLabsWs.on('message', data => {
+        elevenLabsWs.on('message', async data => {
           try {
             // @ts-expect-error
             const message = JSON.parse(data)
@@ -184,6 +180,29 @@ server.register(async fastifyInstance => {
 
               case 'user_transcript':
                 console.log(`[Twilio] User transcript: ${message.user_transcription_event?.user_transcript}`)
+                break
+
+              case 'tool_request':
+                console.log(`[Tool Request] tool request received`)
+                const toolName = message.tool_request?.tool_name
+                const toolParameters = message.tool_request?.params || {}
+
+                if (toolName === TOOLS.transferCall && callSid) {
+                  const transferResult = await handleTransferCall(callSid, twilioClient)
+                  console.log(`[Tool Request] Transfer result: ${JSON.stringify(transferResult)}`)
+                  console.log(
+                    `[II] Sending tool response to ElevenLabs with event ID: ${message.tool_request.event_id}`,
+                  )
+                  const toolResponse = {
+                    type: 'tool_response',
+                    event_id: message.tool_request.event_id,
+                    tool_name: 'transfer_to_agent',
+                    result: transferResult,
+                  }
+                  console.log(`[II] Tool response payload: ${JSON.stringify(toolResponse)}`)
+
+                  elevenLabsWs?.send(JSON.stringify(toolResponse))
+                }
                 break
 
               default:
