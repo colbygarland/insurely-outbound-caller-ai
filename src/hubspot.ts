@@ -50,6 +50,10 @@ export const HUBSPOT = {
           },
         ],
       })
+      if (response.total < 1) {
+        console.log(`[Hubspot API] no results found`)
+        return null
+      }
       console.log(`[Hubspot API] response = ${response}`)
       return response.results as unknown as Array<Client>
     } catch (error) {
@@ -77,7 +81,7 @@ export const HUBSPOT = {
       legalConsent: [],
       communication: '',
       consented: true,
-      startTime,
+      startTime, // 2025-04-02T01:16:00.012Z
       locale: 'en',
       slug: '',
       email,
@@ -87,6 +91,9 @@ export const HUBSPOT = {
         method: 'POST',
         path: '/scheduler/v3/meetings/meeting-links/book',
         body,
+        headers: {
+          authorization: `Bearer ${process.env.HUBSPOT_ACCESS_TOKEN}`,
+        },
       })
       console.log(`[Hubspot API] response = ${response}`)
     } catch (error) {

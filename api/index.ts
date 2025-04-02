@@ -360,16 +360,37 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "firstName": "Colby",
     "lastName": "Garland",
     "phone": "780-882-4742",
-    "email": "colbyrobyn2017@gmail.com"
+    "email": "colbyrobyn2017@gmail.com",
+    "day": "April 4",
+    "time": "14:30:00",
+    "timezone": "MST"
     }' | jq
  */
 server.all('/hubspot', async (request: any) => {
   console.log(`[Hubspot] testing hubspot`)
-  const { phone, email, firstName, lastName } = request.body
-  if (!phone || !email || !firstName || !lastName) {
-    throw new Error('One of [phone, email, firstName, lastName] is required')
+  const { phone, email, firstName, lastName, day, time, timezone } = request.body
+  if (!phone || !email || !firstName || !lastName || !day || !time) {
+    throw new Error('One of [phone, email, firstName, lastName, day, time] is required')
   }
+
+  // Ensure we have this customer in Hubspot, although I imagine we might not need this
+  // if we are initiating this from Hubspot already..
   const response = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
-  console.log(`[Hubspot] Response: ${JSON.stringify(response, null, 2)}`)
-  return response
+  if (!response) {
+    return 'no user found'
+  }
+
+  // Will this pigeon hole us if this is happening near the end of the year??
+  const year = new Date().getFullYear()
+  // How are we going to get the timezone reliably? That is a must
+  const date = new Date(`${day} ${year} ${time} ${timezone}`)
+  const startTime = date.toISOString()
+
+  // Book the actual meeting now
+  const meetingResponse = await HUBSPOT.bookMeeting({ firstName, lastName, email, startTime })
+  if (!meetingResponse) {
+    return 'user found, but no meeting was booked'
+  }
+
+  return meetingResponse
 })
