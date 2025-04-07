@@ -6,7 +6,7 @@ bun dev
 # Second terminal
 ngrok http http://localhost:8000
 # Third terminal
-curl -X POST https://c69b-208-127-188-75.ngrok-free.app/outbound-call \
+curl -X POST https://97ca-208-127-188-75.ngrok-free.app/outbound-call \
 -H "Content-Type: application/json" \
 -d '{
     "number": "780-882-4742"

@@ -1,5 +1,6 @@
 import { Client } from '@hubspot/api-client'
 import { FilterOperatorEnum } from '@hubspot/api-client/lib/codegen/crm/contacts'
+import axios from 'axios'
 
 const hubspotClient = new Client({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN })
 
@@ -69,21 +70,18 @@ export const HUBSPOT = {
   }: {
     firstName: string
     lastName: string
-    startTime: string
+    startTime: number // JS unix timestamp
     email: string
   }) => {
     // Pretty sure its this: https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
     const body = {
-      duration: 30,
+      duration: 1800000, // 30 minutes
       firstName,
       lastName,
-      likelyAvailable: [],
-      legalConsent: [],
-      communication: '',
       consented: true,
-      startTime, // 2025-04-02T01:16:00.012Z
-      locale: 'en',
-      slug: '',
+      startTime, // JS unix timestamp
+      locale: 'en-us',
+      slug: process.env.HUBSPOT_MEETING_SLUG,
       email,
     }
     try {
@@ -91,11 +89,10 @@ export const HUBSPOT = {
         method: 'POST',
         path: '/scheduler/v3/meetings/meeting-links/book',
         body,
-        headers: {
-          authorization: `Bearer ${process.env.HUBSPOT_ACCESS_TOKEN}`,
-        },
       })
-      console.log(`[Hubspot API] response = ${response}`)
+      const json = await response.json()
+      console.log(`[Hubspot API] response = ${json}`)
+      return json
     } catch (error) {
       console.error(`[Hubspot] error with getClientDetails(): ${JSON.stringify(error)}`)
       return null

@@ -361,7 +361,7 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 4",
+    "day": "April 16",
     "time": "14:30:00",
     "timezone": "MST"
     }' | jq
@@ -384,7 +384,7 @@ server.all('/hubspot', async (request: any) => {
   const year = new Date().getFullYear()
   // How are we going to get the timezone reliably? That is a must
   const date = new Date(`${day} ${year} ${time} ${timezone}`)
-  const startTime = date.toISOString()
+  const startTime = date.getTime()
 
   // Book the actual meeting now
   const meetingResponse = await HUBSPOT.bookMeeting({ firstName, lastName, email, startTime })
