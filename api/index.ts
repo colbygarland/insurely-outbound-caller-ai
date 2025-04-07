@@ -5,6 +5,7 @@ import { getSignedUrl, handleTransferCall } from '../src/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
+import { ELEVENLABS } from '../src/elevenLabs'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -35,13 +36,20 @@ server.post('/outbound-call', async (request, reply) => {
     return reply.code(400).send({ error: 'Phone number is required' })
   }
 
+  // Try and get the prompt directly from the ElevenLabs agent
+  const agent = await ELEVENLABS.getAgent()
+
+  const url = `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
+    agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT,
+  )}&first_message=${encodeURIComponent(agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE)}`
+
+  console.log(`[Twilio] Outbound call URL string length: ${url.length}`)
+
   try {
     const call = await twilioClient.calls.create({
       from: TWILIO_PHONE_NUMBER,
       to: number,
-      url: `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
-        PROMPT,
-      )}&first_message=${encodeURIComponent(FIRST_MESSAGE)}`,
+      url,
     })
 
     reply.send({
@@ -92,6 +100,7 @@ server.register(async fastifyInstance => {
     const setupElevenLabs = async () => {
       try {
         const signedUrl = await getSignedUrl(ELEVENLABS_AGENT_ID, ELEVENLABS_API_KEY)
+        const agent = await ELEVENLABS.getAgent()
         elevenLabsWs = new WebSocket(signedUrl)
 
         elevenLabsWs.on('open', () => {
@@ -103,9 +112,9 @@ server.register(async fastifyInstance => {
             conversation_config_override: {
               agent: {
                 prompt: {
-                  prompt: PROMPT,
+                  prompt: agent?.conversation_config.agent?.prompt?.prompt ?? PROMPT,
                 },
-                first_message: FIRST_MESSAGE,
+                first_message: agent?.conversation_config.agent?.first_message ?? FIRST_MESSAGE,
               },
             },
           }
@@ -207,6 +216,30 @@ server.register(async fastifyInstance => {
                     console.log(`[II] Tool response payload: ${JSON.stringify(toolResponse)}`)
 
                     elevenLabsWs?.send(JSON.stringify(toolResponse))
+                  }
+                  if (toolName === TOOLS.bookCall) {
+                    console.log(`[Tool Request] Book call request received`)
+                    console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
+                    break
+                    const bookCallResult = await HUBSPOT.bookMeeting({
+                      firstName: toolParameters.firstName,
+                      lastName: toolParameters.lastName,
+                      email: toolParameters.email,
+                      startTime: toolParameters.startTime,
+                    })
+                    console.log(`[Tool Request] Book call result: ${JSON.stringify(bookCallResult)}`)
+                    console.log(
+                      `[Tool Request] Sending tool response to ElevenLabs with event ID: ${message.tool_request.event_id}`,
+                    )
+                    const bookCallResponse = {
+                      type: 'tool_response',
+                      event_id: message.tool_request.event_id,
+                      tool_name: 'book_call',
+                      result: bookCallResult,
+                    }
+                    console.log(`[Tool Request] Tool response payload: ${JSON.stringify(bookCallResponse)}`)
+
+                    elevenLabsWs?.send(JSON.stringify(bookCallResponse))
                   }
                 }
                 break

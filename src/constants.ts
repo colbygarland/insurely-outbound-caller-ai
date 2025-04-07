@@ -10,4 +10,5 @@ export const PORT = (process.env.PORT as unknown as number) || 8000
 
 export const TOOLS = {
   transferCall: 'transfer_call',
+  bookCall: 'book_call',
 }
