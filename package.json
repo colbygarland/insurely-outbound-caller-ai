@@ -4,7 +4,9 @@
   "main": "api/index.ts",
   "scripts": {
     "dev": "bun --hot run api/index",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "run": "bun run api/index",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "bun build ./api/index.ts --outfile index --compile --minify --sourcemap"
   },
   "keywords": [],
   "author": "",
