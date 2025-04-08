@@ -49,12 +49,13 @@ export const HUBSPOT = {
             ],
           },
         ],
+        properties: ['firstname', 'lastname', 'email', 'phone', 'hubspot_owner_id'],
       })
       if (response.total < 1) {
         console.log(`[Hubspot API] no results found`)
         return null
       }
-      console.log(`[Hubspot API] response = ${response}`)
+      console.log(`[Hubspot API] response = ${JSON.stringify(response)}`)
       return response.results as unknown as Array<Client>
     } catch (error) {
       console.error(`[Hubspot] error with getClientDetails(): ${JSON.stringify(error)}`)
@@ -66,13 +67,15 @@ export const HUBSPOT = {
     lastName,
     startTime,
     email,
+    ownerId,
   }: {
     firstName: string
     lastName: string
     startTime: number // JS unix timestamp
     email: string
+    ownerId?: string // the owner of the contact in Hubspot, might be empty
   }) => {
-    // Pretty sure its this: https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
+    // https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
     const body = {
       duration: 1800000, // 30 minutes
       firstName,
@@ -82,6 +85,7 @@ export const HUBSPOT = {
       locale: 'en-us',
       slug: process.env.HUBSPOT_MEETING_SLUG,
       email,
+      ...(ownerId ? { likelyAvailableUserIds: [ownerId] } : {}),
     }
     try {
       const response = await hubspotClient.apiRequest({
@@ -90,7 +94,10 @@ export const HUBSPOT = {
         body,
       })
       const json = await response.json()
-      console.log(`[Hubspot API] response = ${json}`)
+      console.log(`[Hubspot API] response = ${JSON.stringify(json)}`)
+      if (json.error) {
+        throw new Error(json)
+      }
       return json
     } catch (error) {
       console.error(`[Hubspot] error with getClientDetails(): ${JSON.stringify(error)}`)

@@ -1,7 +1,7 @@
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { getSignedUrl, handleTransferCall } from '../src/utils'
+import { escapeXML, getSignedUrl, handleTransferCall } from '../src/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
@@ -30,7 +30,7 @@ const activeCalls = new Map()
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
-  const { number } = request.body
+  const { number, email, firstName, lastName } = request.body
 
   if (!number) {
     return reply.code(400).send({ error: 'Phone number is required' })
@@ -39,9 +39,12 @@ server.post('/outbound-call', async (request, reply) => {
   // Try and get the prompt directly from the ElevenLabs agent
   const agent = await ELEVENLABS.getAgent()
 
-  const url = `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
-    agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT,
-  )}&first_message=${encodeURIComponent(agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE)}`
+  // const url = `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
+  //   agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT,
+  // )}&first_message=${encodeURIComponent(agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE)}&email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+
+  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+  const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
   console.log(`[Twilio] Outbound call URL string length: ${url.length}`)
 
@@ -69,12 +72,18 @@ server.post('/outbound-call', async (request, reply) => {
 
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
+  // @ts-expect-error
+  const { email, firstName, lastName } = request.query
+  const agent = await ELEVENLABS.getAgent()
+  const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
+  const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
+
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
     <Response>
         <Connect>
         <Stream url="wss://${request.headers.host}/outbound-media-stream">
-            <Parameter name="prompt" value="${PROMPT}" />
-            <Parameter name="first_message" value="${FIRST_MESSAGE}" />
+            <Parameter name="prompt" value="${escapeXML(prompt)}" />
+            <Parameter name="first_message" value="${escapeXML(first_message)}" />
         </Stream>
         </Connect>
     </Response>`
@@ -84,7 +93,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
 
 // WebSocket route for handling media streams
 server.register(async fastifyInstance => {
-  fastifyInstance.get('/outbound-media-stream', { websocket: true }, (ws, req) => {
+  fastifyInstance.get('/outbound-media-stream', { websocket: true }, async (ws, req) => {
     console.info('[Server] Twilio connected to outbound media stream')
 
     // Variables to track the call
@@ -216,6 +225,7 @@ server.register(async fastifyInstance => {
                     console.log(`[II] Tool response payload: ${JSON.stringify(toolResponse)}`)
 
                     elevenLabsWs?.send(JSON.stringify(toolResponse))
+                    break
                   }
                   if (toolName === TOOLS.bookCall) {
                     console.log(`[Tool Request] Book call request received`)
@@ -264,6 +274,10 @@ server.register(async fastifyInstance => {
                   console.log(`[Tool Request] Tool response payload: ${JSON.stringify(toolResponse)}`)
 
                   elevenLabsWs?.send(JSON.stringify(toolResponse))
+                }
+                if (toolName === TOOLS.bookCall) {
+                  console.log(`[Tool Request] Book call request received`)
+                  console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
                 }
                 break
 
@@ -394,33 +408,52 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 16",
+    "day": "April 17",
     "time": "14:30:00",
-    "timezone": "MST"
+    "timezone": "MST",
+    "skipMeeting": false
     }' | jq
  */
 server.all('/hubspot', async (request: any) => {
   console.log(`[Hubspot] testing hubspot`)
-  const { phone, email, firstName, lastName, day, time, timezone } = request.body
-  if (!phone || !email || !firstName || !lastName || !day || !time) {
-    throw new Error('One of [phone, email, firstName, lastName, day, time] is required')
+  const { phone, email, firstName, lastName, day, time, timezone, skipMeeting } = request.body
+  if (!email || !firstName || !lastName || !day || !time) {
+    console.error(`[Hubspot] missing required parameters`)
+    throw new Error('One of [email, firstName, lastName, day, time] is required')
   }
 
-  // Ensure we have this customer in Hubspot, although I imagine we might not need this
-  // if we are initiating this from Hubspot already..
-  const response = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
-  if (!response) {
-    return 'no user found'
+  console.log(
+    `[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`,
+  )
+
+  const users = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
+  if (!users) {
+    console.log(`[Hubspot] no user found`)
   }
+
+  const user = users?.[0] ?? null
 
   // Will this pigeon hole us if this is happening near the end of the year??
   const year = new Date().getFullYear()
   // How are we going to get the timezone reliably? That is a must
   const date = new Date(`${day} ${year} ${time} ${timezone}`)
   const startTime = date.getTime()
+  console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`)
+
+  if (skipMeeting) {
+    console.log(`[Hubspot] Book meeting is false, not booking meeting`)
+    return user
+  }
 
   // Book the actual meeting now
-  const meetingResponse = await HUBSPOT.bookMeeting({ firstName, lastName, email, startTime })
+  const meetingResponse = await HUBSPOT.bookMeeting({
+    firstName,
+    lastName,
+    email,
+    startTime,
+    // @ts-expect-error
+    ownerId: user?.properties?.hubspot_owner_id,
+  })
   if (!meetingResponse) {
     return 'user found, but no meeting was booked'
   }

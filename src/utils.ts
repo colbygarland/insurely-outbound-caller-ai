@@ -97,3 +97,13 @@ export async function handleTransferCall(
     return { success: false, error: error.message }
   }
 }
+
+export const escapeXML = (unsafe: string) => {
+  return unsafe
+    .replaceAll(/&/g, '&amp;')
+    .replaceAll(/</g, '&lt;')
+    .replaceAll(/>/g, '&gt;')
+    .replaceAll(/"/g, '&quot;')
+    .replaceAll(/'/g, '&apos;')
+    .replaceAll(/\n/g, ' ')
+}
