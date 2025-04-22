@@ -305,12 +305,12 @@ server.register(async (fastifyInstance) => {
     });
 });
 // Start the Fastify server
-server.listen({ port: constants_1.PORT }, err => {
+server.listen({ port: constants_1.PORT, host: '0.0.0.0' }, err => {
     if (err) {
         console.error('Error starting server:', err);
         process.exit(1);
     }
-    console.log(`[Server] Listening on port ${constants_1.PORT}`);
+    console.log(`[Server] Listening on http://0.0.0.0:${constants_1.PORT}`);
 });
 // Root route for health check
 server.get('/', async (_, reply) => {
