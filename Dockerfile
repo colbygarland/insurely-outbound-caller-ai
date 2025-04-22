@@ -19,5 +19,8 @@ COPY . .
 # Expose the port Fly.io will use
 EXPOSE 3000
 
+# Build the assets
+CMD ["npm", "run", "buildNode"]
+
 # Start the server
 CMD ["node", "dist/api/index.js"]
