@@ -1,18 +1,15 @@
 {
   "name": "outbound-caller-ai",
   "version": "1.0.0",
-  "main": "api/index.ts",
+  "main": "dist/api/index.js",
   "scripts": {
     "dev": "bun --hot run api/index.ts",
-    "run": "bun run api/index.ts",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "bun build ./api/index.ts --outfile index --compile --minify --sourcemap"
+    "run": "npx tsc && node dist/api/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
-  "type": "module",
   "dependencies": {
     "@fastify/formbody": "^8.0.2",
     "@fastify/websocket": "^11.0.2",
@@ -32,6 +29,6 @@
   },
   "private": true,
   "peerDependencies": {
-    "typescript": "^5"
+    "typescript": "^5.8.3"
   }
 }

@@ -19,7 +19,6 @@ export async function getSignedUrl(agentId: string, apiKey: string) {
     }
 
     const data = await response.json()
-    // @ts-expect-error
     return data.signed_url
   } catch (error) {
     console.error('Error getting signed URL:', error)
