@@ -1,4 +1,4 @@
-export type Client = {
+export type HubspotUser = {
   createdAt: string
   archived: boolean
   id: string
@@ -7,6 +7,7 @@ export type Client = {
     email: string
     firstname: string
     hs_object_id: string
+    hubspot_owner_id: string
     lastmodifieddate: string
     lastname: string
   }

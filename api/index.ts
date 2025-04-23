@@ -36,14 +36,7 @@ server.post('/outbound-call', async (request, reply) => {
     return reply.code(400).send({ error: 'Phone number is required' })
   }
 
-  // Try and get the prompt directly from the ElevenLabs agent
-  const agent = await ELEVENLABS.getAgent()
-
-  // const url = `https://${request.headers.host}/outbound-call-twiml?prompt=${encodeURIComponent(
-  //   agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT,
-  // )}&first_message=${encodeURIComponent(agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE)}&email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
-
-  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}`
+  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}`
   const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
   console.log(`[Twilio] Outbound call URL string length: ${url.length}`)
@@ -73,7 +66,7 @@ server.post('/outbound-call', async (request, reply) => {
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
   // @ts-expect-error
-  const { email, firstName, lastName } = request.query
+  const { email, firstName, lastName, phone } = request.query
   const agent = await ELEVENLABS.getAgent()
   const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
   const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
@@ -84,6 +77,10 @@ server.all('/outbound-call-twiml', async (request, reply) => {
         <Stream url="wss://${request.headers.host}/outbound-media-stream">
             <Parameter name="prompt" value="${escapeXML(prompt)}" />
             <Parameter name="first_message" value="${escapeXML(first_message)}" />
+            <Parameter name="email" value="${escapeXML(email)}" />
+            <Parameter name="firstName" value="${escapeXML(firstName)}" />
+            <Parameter name="lastName" value="${escapeXML(lastName)}" />
+            <Parameter name="phone" value="${escapeXML(phone)}" />
         </Stream>
         </Connect>
     </Response>`
@@ -100,7 +97,15 @@ server.register(async fastifyInstance => {
     let streamSid: string | null = null
     let callSid: string | null = null
     let elevenLabsWs: WebSocket | null = null
-    let customParameters = null // Add this to store parameters
+    let customParameters: {
+      email: string
+      first_message: string
+      prompt: string
+      firstName: string
+      lastName: string
+      phone: string
+    } | null = null // Add this to store parameters
+    let callLog = ''
 
     // Handle WebSocket errors
     ws.on('error', console.error)
@@ -197,10 +202,12 @@ server.register(async fastifyInstance => {
 
               case 'agent_response':
                 console.log(`[Twilio] Agent response: ${message.agent_response_event?.agent_response}`)
+                callLog += `[Agent] ${message.agent_response_event?.agent_response}\n`
                 break
 
               case 'user_transcript':
                 console.log(`[Twilio] User transcript: ${message.user_transcription_event?.user_transcript}`)
+                callLog += `[User] ${message.user_transcription_event?.user_transcript}\n`
                 break
 
               case 'tool_request':
@@ -275,11 +282,34 @@ server.register(async fastifyInstance => {
 
                   elevenLabsWs?.send(JSON.stringify(toolResponse))
                 }
+
                 if (toolName === TOOLS.bookCall) {
                   console.log(`[Tool Request] Book call request received`)
                   console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
                 }
-                break
+
+                if (toolName === TOOLS.createCall) {
+                  console.log(`[Tool Request] Create call request received`)
+                  const user = await HUBSPOT.getClientDetails({
+                    firstName: customParameters?.firstName,
+                    lastName: customParameters?.lastName,
+                    email: customParameters?.email,
+                    phone: customParameters?.phone,
+                  })
+                  const response = await HUBSPOT.createEngagement({
+                    id: Number(user?.[0].id),
+                    ownerId: Number(user?.[0].properties.hubspot_owner_id),
+                    metadata: {
+                      body: 'Hello this is Cosmo Kramer',
+                      fromNumber: process.env.TWILIO_PHONE_NUMBER!,
+                      toNumber: toolParameters.phone,
+                      status: 'COMPLETED',
+                      recordingUrl: '',
+                      durationMilliseconds: 0,
+                    },
+                  })
+                  console.log(`[Tool Request] response: ${JSON.stringify(response)}`)
+                }
 
               default:
                 console.log(`[ElevenLabs] Unhandled message type: ${message.type}`)
@@ -411,7 +441,7 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "day": "April 17",
     "time": "14:30:00",
     "timezone": "MST",
-    "skipMeeting": false
+    "skipMeeting": true,
     }' | jq
  */
 server.all('/hubspot', async (request: any) => {
@@ -440,6 +470,23 @@ server.all('/hubspot', async (request: any) => {
   const startTime = date.getTime()
   console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`)
 
+  // if (createEngagement) {
+  //   const response = await HUBSPOT.createEngagement({
+  //     id: Number(user?.id),
+  //     ownerId: Number(user?.properties.hubspot_owner_id),
+  //     metadata: {
+  //       body: 'Hello this is Cosmo Kramer',
+  //       fromNumber: process.env.TWILIO_PHONE_NUMBER!,
+  //       toNumber: phone,
+  //       status: 'COMPLETED',
+  //       recordingUrl: '',
+  //       durationMilliseconds: 0,
+  //     },
+  //   })
+  //   console.log(`[Hubspot] engagement response: ${JSON.stringify(response)}`)
+  //   return
+  // }
+
   if (skipMeeting) {
     console.log(`[Hubspot] Book meeting is false, not booking meeting`)
     return user
@@ -451,7 +498,6 @@ server.all('/hubspot', async (request: any) => {
     lastName,
     email,
     startTime,
-    // @ts-expect-error
     ownerId: user?.properties?.hubspot_owner_id,
   })
   if (!meetingResponse) {
@@ -460,3 +506,5 @@ server.all('/hubspot', async (request: any) => {
 
   return meetingResponse
 })
+
+server.all('/no-answer', async (request: any) => {})
