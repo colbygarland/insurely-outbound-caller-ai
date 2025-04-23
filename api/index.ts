@@ -30,13 +30,13 @@ const activeCalls = new Map()
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
-  const { number, email, firstName, lastName } = request.body
+  const { number, email, firstName, lastName, timezone } = request.body
 
   if (!number) {
     return reply.code(400).send({ error: 'Phone number is required' })
   }
 
-  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}`
+  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}`
   const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
   console.log(`[Twilio] Outbound call URL string length: ${url.length}`)
@@ -66,7 +66,7 @@ server.post('/outbound-call', async (request, reply) => {
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
   // @ts-expect-error
-  const { email, firstName, lastName, phone } = request.query
+  const { email, firstName, lastName, phone, timezone } = request.query
   const agent = await ELEVENLABS.getAgent()
   const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
   const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
@@ -81,6 +81,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
             <Parameter name="firstName" value="${escapeXML(firstName)}" />
             <Parameter name="lastName" value="${escapeXML(lastName)}" />
             <Parameter name="phone" value="${escapeXML(phone)}" />
+            <Parameter name="timezone" value="${escapeXML(timezone)}" />
         </Stream>
         </Connect>
     </Response>`
@@ -104,6 +105,7 @@ server.register(async fastifyInstance => {
       firstName: string
       lastName: string
       phone: string
+      timezone: string
     } | null = null // Add this to store parameters
     let callLog = ''
 
@@ -235,8 +237,8 @@ server.register(async fastifyInstance => {
                     break
                   }
                   if (toolName === TOOLS.bookCall) {
-                    console.log(`[Tool Request] Book call request received`)
-                    console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
+                    console.log(`[Tool Request 1] Book call request received`)
+                    console.log(`[Tool Request 1] tool parameters: ${JSON.stringify(toolParameters)}`)
                     break
                     const bookCallResult = await HUBSPOT.bookMeeting({
                       firstName: toolParameters.firstName,
@@ -264,7 +266,8 @@ server.register(async fastifyInstance => {
                 console.log(`[Tool Request] client_tool_call received`)
                 const toolName = message.client_tool_call?.tool_name
                 console.log(`[Tool Request] tool name: ${toolName}`)
-                const toolParameters = message.client_tool_call?.params || {}
+                // console.log(`[Tool Request] tool: ${JSON.stringify(message.client_tool_call)}`)
+                const toolParameters = message.client_tool_call?.parameters || {}
 
                 if (toolName === TOOLS.transferCall && callSid) {
                   const transferResult = await handleTransferCall(callSid, twilioClient, activeCalls)
@@ -284,8 +287,8 @@ server.register(async fastifyInstance => {
                 }
 
                 if (toolName === TOOLS.bookCall) {
-                  console.log(`[Tool Request] Book call request received`)
-                  console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
+                  console.log(`[Tool Request 2] Book call request received`)
+                  console.log(`[Tool Request 2] tool parameters: ${JSON.stringify(toolParameters)}`)
                   const response = await handleBookMeetingInHubspot({
                     firstName: customParameters?.firstName!,
                     lastName: customParameters?.lastName!,
@@ -293,7 +296,7 @@ server.register(async fastifyInstance => {
                     phone: customParameters?.phone!,
                     day: toolParameters?.day,
                     time: toolParameters?.time,
-                    timezone: toolParameters?.timezone,
+                    timezone: customParameters?.timezone!,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
                 }
