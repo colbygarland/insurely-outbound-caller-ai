@@ -204,12 +204,12 @@ server.register(async fastifyInstance => {
 
               case 'agent_response':
                 console.log(`[Twilio] Agent response: ${message.agent_response_event?.agent_response}`)
-                callLog += `[Agent] ${message.agent_response_event?.agent_response}\n`
+                callLog += `<p><strong>[Agent]</strong> ${message.agent_response_event?.agent_response}</p>`
                 break
 
               case 'user_transcript':
                 console.log(`[Twilio] User transcript: ${message.user_transcription_event?.user_transcript}`)
-                callLog += `[User] ${message.user_transcription_event?.user_transcript}\n`
+                callLog += `<p><strong>[User]</strong> ${message.user_transcription_event?.user_transcript}</p>`
                 break
 
               case 'tool_request':
@@ -313,7 +313,7 @@ server.register(async fastifyInstance => {
                     id: Number(user?.[0].id),
                     ownerId: Number(user?.[0].properties.hubspot_owner_id),
                     metadata: {
-                      body: 'Hello this is Cosmo Kramer',
+                      body: callLog,
                       fromNumber: process.env.TWILIO_PHONE_NUMBER!,
                       toNumber: toolParameters.phone,
                       status: 'COMPLETED',
