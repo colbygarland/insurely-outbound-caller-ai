@@ -1,5 +1,6 @@
 import type { Twilio as TwilioInterface } from 'twilio'
 import Twilio from 'twilio'
+import { HUBSPOT } from './hubspot'
 
 // Helper function to get signed URL for authenticated conversations
 export async function getSignedUrl(agentId: string, apiKey: string) {
@@ -105,4 +106,66 @@ export const escapeXML = (unsafe: string) => {
     .replaceAll(/"/g, '&quot;')
     .replaceAll(/'/g, '&apos;')
     .replaceAll(/\n/g, ' ')
+}
+
+export const handleBookMeetingInHubspot = async ({
+  email,
+  phone,
+  firstName,
+  lastName,
+  day,
+  time,
+  timezone,
+  skipMeeting,
+}: {
+  email: string
+  phone: string
+  firstName: string
+  lastName: string
+  day: string
+  time: string
+  timezone: string
+  skipMeeting?: boolean
+}) => {
+  if (!email || !firstName || !lastName || !day || !time) {
+    console.error(`[Hubspot] missing required parameters`)
+    throw new Error('One of [email, firstName, lastName, day, time] is required')
+  }
+
+  console.log(
+    `[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`,
+  )
+
+  const users = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
+  if (!users) {
+    console.log(`[Hubspot] no user found`)
+  }
+
+  const user = users?.[0] ?? null
+
+  // Will this pigeon hole us if this is happening near the end of the year??
+  const year = new Date().getFullYear()
+  // How are we going to get the timezone reliably? That is a must
+  const date = new Date(`${day} ${year} ${time} ${timezone}`)
+  const startTime = date.getTime()
+  console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`)
+
+  if (skipMeeting) {
+    console.log(`[Hubspot] Book meeting is false, not booking meeting`)
+    return user
+  }
+
+  // Book the actual meeting now
+  const meetingResponse = await HUBSPOT.bookMeeting({
+    firstName,
+    lastName,
+    email,
+    startTime,
+    ownerId: user?.properties?.hubspot_owner_id,
+  })
+  if (!meetingResponse) {
+    return 'user found, but no meeting was booked'
+  }
+
+  return meetingResponse
 }
