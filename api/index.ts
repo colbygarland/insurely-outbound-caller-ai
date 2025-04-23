@@ -1,7 +1,7 @@
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { escapeXML, getSignedUrl, handleTransferCall } from '../src/utils'
+import { escapeXML, getSignedUrl, handleBookMeetingInHubspot, handleTransferCall } from '../src/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
@@ -286,6 +286,16 @@ server.register(async fastifyInstance => {
                 if (toolName === TOOLS.bookCall) {
                   console.log(`[Tool Request] Book call request received`)
                   console.log(`[Tool Request] tool parameters: ${JSON.stringify(toolParameters)}`)
+                  const response = await handleBookMeetingInHubspot({
+                    firstName: customParameters?.firstName!,
+                    lastName: customParameters?.lastName!,
+                    email: customParameters?.email!,
+                    phone: customParameters?.phone!,
+                    day: toolParameters?.day,
+                    time: toolParameters?.time,
+                    timezone: toolParameters?.timezone,
+                  })
+                  console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
                 }
 
                 if (toolName === TOOLS.createCall) {
@@ -438,73 +448,26 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 17",
+    "day": "April 30",
     "time": "14:30:00",
     "timezone": "MST",
-    "skipMeeting": true,
+    "skipMeeting": false,
     }' | jq
  */
 server.all('/hubspot', async (request: any) => {
   console.log(`[Hubspot] testing hubspot`)
   const { phone, email, firstName, lastName, day, time, timezone, skipMeeting } = request.body
-  if (!email || !firstName || !lastName || !day || !time) {
-    console.error(`[Hubspot] missing required parameters`)
-    throw new Error('One of [email, firstName, lastName, day, time] is required')
-  }
-
-  console.log(
-    `[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`,
-  )
-
-  const users = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
-  if (!users) {
-    console.log(`[Hubspot] no user found`)
-  }
-
-  const user = users?.[0] ?? null
-
-  // Will this pigeon hole us if this is happening near the end of the year??
-  const year = new Date().getFullYear()
-  // How are we going to get the timezone reliably? That is a must
-  const date = new Date(`${day} ${year} ${time} ${timezone}`)
-  const startTime = date.getTime()
-  console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`)
-
-  // if (createEngagement) {
-  //   const response = await HUBSPOT.createEngagement({
-  //     id: Number(user?.id),
-  //     ownerId: Number(user?.properties.hubspot_owner_id),
-  //     metadata: {
-  //       body: 'Hello this is Cosmo Kramer',
-  //       fromNumber: process.env.TWILIO_PHONE_NUMBER!,
-  //       toNumber: phone,
-  //       status: 'COMPLETED',
-  //       recordingUrl: '',
-  //       durationMilliseconds: 0,
-  //     },
-  //   })
-  //   console.log(`[Hubspot] engagement response: ${JSON.stringify(response)}`)
-  //   return
-  // }
-
-  if (skipMeeting) {
-    console.log(`[Hubspot] Book meeting is false, not booking meeting`)
-    return user
-  }
-
-  // Book the actual meeting now
-  const meetingResponse = await HUBSPOT.bookMeeting({
+  const response = await handleBookMeetingInHubspot({
+    email,
+    phone,
     firstName,
     lastName,
-    email,
-    startTime,
-    ownerId: user?.properties?.hubspot_owner_id,
+    day,
+    time,
+    timezone,
+    skipMeeting,
   })
-  if (!meetingResponse) {
-    return 'user found, but no meeting was booked'
-  }
-
-  return meetingResponse
+  return response
 })
 
 server.all('/no-answer', async (request: any) => {})
