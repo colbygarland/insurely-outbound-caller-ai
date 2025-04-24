@@ -30,7 +30,11 @@ const activeCalls = new Map()
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
-  const { number, email, firstName, lastName, timezone } = request.body
+  const { number, email, firstName, lastName, timezone, caller_api_key } = request.body
+
+  if (!caller_api_key || caller_api_key !== process.env.CALLER_API_KEY) {
+    return reply.code(401).send({ error: 'Unauthorized' })
+  }
 
   if (!number) {
     return reply.code(400).send({ error: 'Phone number is required' })
@@ -400,7 +404,7 @@ server.register(async fastifyInstance => {
 })
 
 // Start the Fastify server
-server.listen({ port: PORT, host: '0.0.0.0' }, err => {
+server.listen({ port: PORT }, err => {
   if (err) {
     console.error('Error starting server:', err)
     process.exit(1)
