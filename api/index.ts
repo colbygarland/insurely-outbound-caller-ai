@@ -288,6 +288,7 @@ server.register(async fastifyInstance => {
                   console.log(`[Tool Request] Tool response payload: ${JSON.stringify(toolResponse)}`)
 
                   elevenLabsWs?.send(JSON.stringify(toolResponse))
+                  break
                 }
 
                 if (toolName === TOOLS.bookCall) {
@@ -303,6 +304,7 @@ server.register(async fastifyInstance => {
                     timezone: customParameters?.timezone!,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
+                  break
                 }
 
                 if (toolName === TOOLS.createCall) {
@@ -326,6 +328,7 @@ server.register(async fastifyInstance => {
                     },
                   })
                   console.log(`[Tool Request] response: ${JSON.stringify(response)}`)
+                  break
                 }
 
               default:
