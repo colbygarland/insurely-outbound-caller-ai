@@ -387,6 +387,30 @@ server.register(async fastifyInstance => {
                   break
                 }
 
+                if (toolName === TOOLS.noAnswer) {
+                  console.log(`[Tool Request] No answer received`)
+                  const user = await HUBSPOT.getClientDetails({
+                    firstName: customParameters?.firstName,
+                    lastName: customParameters?.lastName,
+                    email: customParameters?.email,
+                    phone: customParameters?.phone,
+                  })
+                  const response = await HUBSPOT.createEngagement({
+                    id: Number(user?.[0].id),
+                    ownerId: Number(user?.[0].properties.hubspot_owner_id),
+                    metadata: {
+                      body: "<p><strong>[User]</strong> didn't answer the call.</p>",
+                      fromNumber: process.env.TWILIO_PHONE_NUMBER!,
+                      toNumber: toolParameters.phone,
+                      status: 'COMPLETED',
+                      recordingUrl: '',
+                      durationMilliseconds: 0,
+                    },
+                  })
+                  console.log(`[Tool Request] response: ${JSON.stringify(response)}`)
+                  break
+                }
+
               default:
                 console.log(`[ElevenLabs] Unhandled message type: ${message.type}`)
             }

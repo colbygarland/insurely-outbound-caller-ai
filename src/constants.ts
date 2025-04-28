@@ -12,4 +12,5 @@ export const TOOLS = {
   transferCall: 'transfer_call',
   bookCall: 'book_call',
   createCall: 'create_call',
+  noAnswer: 'no_answer',
 }
