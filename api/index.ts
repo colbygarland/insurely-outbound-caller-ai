@@ -6,6 +6,7 @@ import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
 import { ELEVENLABS } from '../src/elevenLabs'
+import { CallEvent } from '../types/twilio'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -25,7 +26,13 @@ const server = createServer()
 // Initialize Twilio client
 const twilioClient = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-const activeCalls = new Map()
+const activeCalls: Array<{
+  phone: string
+  firstName: string
+  lastName: string
+  email: string
+  callSid: string
+}> = []
 
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
@@ -43,14 +50,36 @@ server.post('/outbound-call', async (request, reply) => {
   const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}`
   const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
-  console.log(`[Twilio] Outbound call URL string length: ${url.length}`)
-
   try {
     const call = await twilioClient.calls.create({
       from: TWILIO_PHONE_NUMBER,
       to: number,
       url,
+      machineDetection: 'Enable',
+      asyncAmd: 'true',
+      // timeout: 15, // short timeout for testing
+      statusCallbackMethod: 'POST',
+      statusCallback: `https://${request.headers.host}/outbound-call-status`,
     })
+
+    activeCalls.push({
+      phone: number,
+      firstName,
+      lastName,
+      email,
+      callSid: call.sid,
+    })
+
+    console.log(`[Twilio] Call status: ${call.status}`)
+
+    if (call.answeredBy) {
+      console.log(`[Twilio] Call answered by: ${call.answeredBy}`)
+      reply.send({
+        success: true,
+        message: `Call answered by: ${call.answeredBy}`,
+        callSid: call.sid,
+      })
+    }
 
     reply.send({
       success: true,
@@ -63,6 +92,43 @@ server.post('/outbound-call', async (request, reply) => {
       success: false,
       error: 'Failed to initiate call',
       details: error,
+    })
+  }
+})
+
+// @ts-expect-error
+server.post('/outbound-call-status', async (request: { body: CallEvent }, reply) => {
+  const { CallStatus } = request.body
+
+  if (CallStatus === 'no-answer') {
+    console.log(`[Twilio] Call status: ${CallStatus}`)
+    const call = activeCalls.find(call => call.callSid === request.body.CallSid)
+    // tell Hubspot the call didn't land
+    if (call) {
+      const user = await HUBSPOT.getClientDetails({
+        firstName: call.firstName,
+        lastName: call.lastName,
+        email: call.email,
+      })
+      if (user?.[0]?.id) {
+        await HUBSPOT.createEngagement({
+          id: Number(user[0].id),
+          ownerId: Number(user[0].properties.hubspot_owner_id),
+          metadata: {
+            body: `<p><strong>[User]</strong> didn't answer the call.</p>`,
+            fromNumber: process.env.TWILIO_PHONE_NUMBER!,
+            toNumber: call.phone,
+            recordingUrl: '',
+            durationMilliseconds: 0,
+            status: 'COMPLETED',
+          },
+        })
+      }
+    }
+
+    reply.send({
+      success: true,
+      message: 'Call not answered',
     })
   }
 })
@@ -425,12 +491,12 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
   console.log(`[Twilio] Incoming call received with SID: ${callSid}`)
 
   if (callSid) {
-    activeCalls.set(callSid, {
-      status: 'active',
-      from: request.body.From,
-      to: request.body.To,
-      started: new Date(),
-    })
+    // activeCalls.set(callSid, {
+    //   status: 'active',
+    //   from: request.body.From,
+    //   to: request.body.To,
+    //   started: new Date(),
+    // })
     console.log(
       `[Twilio] Call tracked: ${JSON.stringify({
         from: request.body.From,

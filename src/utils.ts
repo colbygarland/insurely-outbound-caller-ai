@@ -30,7 +30,13 @@ export async function getSignedUrl(agentId: string, apiKey: string) {
 export async function handleTransferCall(
   callSid: string,
   twilioClient: TwilioInterface,
-  activeCalls: Map<string, unknown>,
+  activeCalls: Array<{
+    phone: string
+    firstName: string
+    lastName: string
+    email: string
+    callSid: string
+  }>,
 ) {
   const forwardPhone = process.env.SUPPORT_PHONE_NUMBER
   if (!forwardPhone) {
@@ -81,12 +87,12 @@ export async function handleTransferCall(
 
     console.log(`[Transfer] Outbound call to agent created: ${agentCall.sid}`)
 
-    activeCalls.set(callSid, {
-      status: 'transferring',
-      conferenceName,
-      agentCallSid: agentCall.sid,
-      forwardPhone,
-    })
+    // activeCalls.set(callSid, {
+    //   status: 'transferring',
+    //   conferenceName,
+    //   agentCallSid: agentCall.sid,
+    //   forwardPhone,
+    // })
 
     return { success: true, agentCallSid: agentCall.sid }
   } catch (error) {
