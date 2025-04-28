@@ -168,6 +168,7 @@ export const handleBookMeetingInHubspot = async ({
     email,
     startTime,
     ownerId: user?.properties?.hubspot_owner_id,
+    phone,
   })
   if (!meetingResponse) {
     return 'user found, but no meeting was booked'

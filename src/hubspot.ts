@@ -69,12 +69,14 @@ export const HUBSPOT = {
     startTime,
     email,
     ownerId,
+    phone,
   }: {
     firstName: string
     lastName: string
     startTime: number // JS unix timestamp
     email: string
     ownerId?: string // the owner of the contact in Hubspot, might be empty
+    phone: string
   }) => {
     // https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
     const body = {
@@ -86,6 +88,12 @@ export const HUBSPOT = {
       locale: 'en-us',
       slug: process.env.HUBSPOT_MEETING_SLUG,
       email,
+      formFields: [
+        {
+          name: 'mobilephone',
+          value: phone,
+        },
+      ],
       ...(ownerId ? { likelyAvailableUserIds: [ownerId] } : {}),
     }
     try {
@@ -95,7 +103,7 @@ export const HUBSPOT = {
         body,
       })
       const json = await response.json()
-      console.log(`[Hubspot API bookMeeting] response = ${JSON.stringify(json)}`)
+      console.log(`[Hubspot API bookMeeting] json = ${JSON.stringify(json)}`)
       if (json.error) {
         throw new Error(json)
       }
@@ -163,6 +171,24 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with createEngagement(): ${JSON.stringify(error)}`)
+      return null
+    }
+  },
+  getAvailableMeetingTimes: async ({ timezone }: { timezone: string }) => {
+    try {
+      const response = await hubspotClient.apiRequest({
+        method: 'GET',
+        path: `/scheduler/v3/meetings/meeting-links/book/${encodeURIComponent(process.env.HUBSPOT_MEETING_SLUG!)}?timezone=${timezone}`,
+      })
+      console.log(`[Hubspot API getAvailableMeetingTimes] response = ${JSON.stringify(response)}`)
+      const json = await response.json()
+      console.log(`[Hubspot API getAvailableMeetingTimes] json = ${JSON.stringify(json)}`)
+      if (json.error) {
+        throw new Error(json)
+      }
+      return json
+    } catch (error) {
+      console.error(`[Hubspot API] error with getAvailableMeetingTimes(): ${JSON.stringify(error)}`)
       return null
     }
   },

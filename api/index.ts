@@ -304,6 +304,7 @@ server.register(async fastifyInstance => {
                       lastName: toolParameters.lastName,
                       email: toolParameters.email,
                       startTime: toolParameters.startTime,
+                      phone: toolParameters.phone,
                     })
                     console.log(`[Tool Request] Book call result: ${JSON.stringify(bookCallResult)}`)
                     console.log(
@@ -507,22 +508,23 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
 })
 
 /** 
- * curl -X POST localhost:8000/hubspot \
+ * curl -X POST localhost:3000/hubspot \
 -H "Content-Type: application/json" \
 -d '{
     "firstName": "Colby",
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 30",
+    "day": "April 28",
     "time": "14:30:00",
     "timezone": "MST",
-    "skipMeeting": false,
+    "skipMeeting": false
     }' | jq
  */
 server.all('/hubspot', async (request: any) => {
   console.log(`[Hubspot] testing hubspot`)
   const { phone, email, firstName, lastName, day, time, timezone, skipMeeting } = request.body
+  // const response = await HUBSPOT.getAvailableMeetingTimes({ timezone: 'America/Edmonton' })
   const response = await handleBookMeetingInHubspot({
     email,
     phone,
