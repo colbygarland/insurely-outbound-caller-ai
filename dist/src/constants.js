@@ -10,4 +10,6 @@ exports.PORT = process.env.PORT || 8000;
 exports.TOOLS = {
     transferCall: 'transfer_call',
     bookCall: 'book_call',
+    createCall: 'create_call',
+    noAnswer: 'no_answer',
 };

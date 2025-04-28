@@ -3,10 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.escapeXML = void 0;
+exports.handleBookMeetingInHubspot = exports.escapeXML = void 0;
 exports.getSignedUrl = getSignedUrl;
 exports.handleTransferCall = handleTransferCall;
 const twilio_1 = __importDefault(require("twilio"));
+const hubspot_1 = require("./hubspot");
 // Helper function to get signed URL for authenticated conversations
 async function getSignedUrl(agentId, apiKey) {
     try {
@@ -66,12 +67,12 @@ async function handleTransferCall(callSid, twilioClient, activeCalls) {
       `,
         });
         console.log(`[Transfer] Outbound call to agent created: ${agentCall.sid}`);
-        activeCalls.set(callSid, {
-            status: 'transferring',
-            conferenceName,
-            agentCallSid: agentCall.sid,
-            forwardPhone,
-        });
+        // activeCalls.set(callSid, {
+        //   status: 'transferring',
+        //   conferenceName,
+        //   agentCallSid: agentCall.sid,
+        //   forwardPhone,
+        // })
         return { success: true, agentCallSid: agentCall.sid };
     }
     catch (error) {
@@ -92,3 +93,39 @@ const escapeXML = (unsafe) => {
         .replaceAll(/\n/g, ' ');
 };
 exports.escapeXML = escapeXML;
+const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, }) => {
+    if (!email || !firstName || !lastName || !day || !time) {
+        console.error(`[Hubspot] missing required parameters`);
+        throw new Error('One of [email, firstName, lastName, day, time] is required');
+    }
+    console.log(`[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`);
+    const users = await hubspot_1.HUBSPOT.getClientDetails({ firstName, lastName, email, phone });
+    if (!users) {
+        console.log(`[Hubspot] no user found`);
+    }
+    const user = users?.[0] ?? null;
+    // Will this pigeon hole us if this is happening near the end of the year??
+    const year = new Date().getFullYear();
+    // How are we going to get the timezone reliably? That is a must
+    const date = new Date(`${day} ${year} ${time} ${timezone}`);
+    const startTime = date.getTime();
+    console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`);
+    if (skipMeeting) {
+        console.log(`[Hubspot] Book meeting is false, not booking meeting`);
+        return user;
+    }
+    // Book the actual meeting now
+    const meetingResponse = await hubspot_1.HUBSPOT.bookMeeting({
+        firstName,
+        lastName,
+        email,
+        startTime,
+        ownerId: user?.properties?.hubspot_owner_id,
+        phone,
+    });
+    if (!meetingResponse) {
+        return 'user found, but no meeting was booked';
+    }
+    return meetingResponse;
+};
+exports.handleBookMeetingInHubspot = handleBookMeetingInHubspot;
