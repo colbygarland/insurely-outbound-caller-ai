@@ -70,17 +70,6 @@ server.post('/outbound-call', async (request, reply) => {
       callSid: call.sid,
     })
 
-    console.log(`[Twilio] Call status: ${call.status}`)
-
-    if (call.answeredBy) {
-      console.log(`[Twilio] Call answered by: ${call.answeredBy}`)
-      reply.send({
-        success: true,
-        message: `Call answered by: ${call.answeredBy}`,
-        callSid: call.sid,
-      })
-    }
-
     reply.send({
       success: true,
       message: 'Call initiated',
@@ -205,10 +194,10 @@ server.register(async fastifyInstance => {
             },
           }
 
-          console.log(
-            '[ElevenLabs] Sending initial config with prompt:',
-            initialConfig.conversation_config_override.agent.prompt.prompt,
-          )
+          // console.log(
+          //   '[ElevenLabs] Sending initial config with prompt:',
+          //   initialConfig.conversation_config_override.agent.prompt.prompt,
+          // )
 
           // Send the configuration to ElevenLabs
           elevenLabsWs?.send(JSON.stringify(initialConfig))
@@ -435,7 +424,8 @@ server.register(async fastifyInstance => {
             callSid = msg.start.callSid
             customParameters = msg.start.customParameters // Store parameters
             console.log(`[Twilio] Stream started - StreamSid: ${streamSid}, CallSid: ${callSid}`)
-            console.log('[Twilio] Start parameters:', customParameters)
+            // console.log('[Twilio] Start parameters:', customParameters)
+            // console.log(`[Twilio] msg: ${JSON.stringify(msg)}`)
             break
 
           case 'media':
