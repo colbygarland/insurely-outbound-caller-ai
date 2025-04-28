@@ -107,8 +107,13 @@ const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, d
     // Will this pigeon hole us if this is happening near the end of the year??
     const year = new Date().getFullYear();
     // How are we going to get the timezone reliably? That is a must
-    const date = new Date(`${day} ${year} ${time} ${timezone}`);
-    const startTime = date.getTime();
+    const date = new Date(`${day} ${year} ${time}`);
+    const options = {
+        timeZone: timezone,
+    };
+    const dateString = date.toLocaleString('en-US', options);
+    const formattedDate = new Date(dateString);
+    const startTime = formattedDate.getTime();
     console.log(`[Hubspot] start time: ${startTime} (${date.toISOString()})`);
     if (skipMeeting) {
         console.log(`[Hubspot] Book meeting is false, not booking meeting`);

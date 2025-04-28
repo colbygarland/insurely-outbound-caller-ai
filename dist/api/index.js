@@ -462,9 +462,9 @@ server.all('/incoming-call-eleven', async (request, reply) => {
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 28",
+    "day": "April 30",
     "time": "14:30:00",
-    "timezone": "MST",
+    "timezone": "America/Edmonton",
     "skipMeeting": false
     }' | jq
  */
@@ -484,4 +484,3 @@ server.all('/hubspot', async (request) => {
     });
     return response;
 });
-server.all('/no-answer', async (request) => { });
