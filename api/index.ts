@@ -488,7 +488,7 @@ server.register(async fastifyInstance => {
 })
 
 // Start the Fastify server
-server.listen({ port: PORT }, err => {
+server.listen({ port: PORT, host: '0.0.0.0' }, err => {
   if (err) {
     console.error('Error starting server:', err)
     process.exit(1)
