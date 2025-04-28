@@ -99,7 +99,7 @@ export const HUBSPOT = {
     try {
       const response = await hubspotClient.apiRequest({
         method: 'POST',
-        path: '/scheduler/v3/meetings/meeting-links/book',
+        path: `/scheduler/v3/meetings/meeting-links/book`,
         body,
       })
       const json = await response.json()
@@ -189,6 +189,23 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with getAvailableMeetingTimes(): ${JSON.stringify(error)}`)
+      return null
+    }
+  },
+  getMeetingLinks: async () => {
+    try {
+      const response = await hubspotClient.apiRequest({
+        method: 'GET',
+        path: `/scheduler/v3/meetings/meeting-links`,
+      })
+      const json = await response.json()
+      console.log(`[Hubspot API getMeetingLinks] json = ${JSON.stringify(json)}`)
+      if (json.error) {
+        throw new Error(json)
+      }
+      return json
+    } catch (error) {
+      console.error(`[Hubspot API] error with getMeetingLinks(): ${JSON.stringify(error)}`)
       return null
     }
   },

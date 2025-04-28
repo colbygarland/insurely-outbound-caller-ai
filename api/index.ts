@@ -524,7 +524,7 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
 server.all('/hubspot', async (request: any) => {
   console.log(`[Hubspot] testing hubspot`)
   const { phone, email, firstName, lastName, day, time, timezone, skipMeeting } = request.body
-  // const response = await HUBSPOT.getAvailableMeetingTimes({ timezone: 'America/Edmonton' })
+  //const response = await HUBSPOT.getAvailableMeetingTimes({ timezone: 'America/Edmonton' })
   const response = await handleBookMeetingInHubspot({
     email,
     phone,
