@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "bun --hot run api/index.ts",
     "buildNode": "npx tsc",
-    "run": "node dist/api/index.js"
+    "run": "node dist/api/index.js",
+    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org colby-garland --project outbound-agent-ai ./dist && sentry-cli sourcemaps upload --org colby-garland --project outbound-agent-ai ./dist"
   },
   "keywords": [],
   "author": "",
@@ -15,6 +16,7 @@
     "@fastify/formbody": "^8.0.2",
     "@fastify/websocket": "^11.0.2",
     "@hubspot/api-client": "^12.0.1",
+    "@sentry/cli": "^2.43.1",
     "@sentry/node": "^9.14.0",
     "dotenv": "^16.4.7",
     "elevenlabs": "^1.56.0",

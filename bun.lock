@@ -7,6 +7,7 @@
         "@fastify/formbody": "^8.0.2",
         "@fastify/websocket": "^11.0.2",
         "@hubspot/api-client": "^12.0.1",
+        "@sentry/cli": "^2.43.1",
         "@sentry/node": "^9.14.0",
         "dotenv": "^16.4.7",
         "elevenlabs": "^1.56.0",
@@ -112,6 +113,24 @@
     "@opentelemetry/sql-common": ["@opentelemetry/sql-common@0.40.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@opentelemetry/sql-common/-/sql-common-0.40.1.tgz", { "dependencies": { "@opentelemetry/core": "^1.1.0" }, "peerDependencies": { "@opentelemetry/api": "^1.1.0" } }, "sha512-nSDlnHSqzC3pXn/wZEZVLuAuJ1MYMXPBwtv2qAbCa3847SaHItdE7SzUq/Jtb0KZmh1zfAbNi3AAMjztTT4Ugg=="],
 
     "@prisma/instrumentation": ["@prisma/instrumentation@6.6.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@prisma/instrumentation/-/instrumentation-6.6.0.tgz", { "dependencies": { "@opentelemetry/instrumentation": "^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0" }, "peerDependencies": { "@opentelemetry/api": "^1.8" } }, "sha512-M/a6njz3hbf2oucwdbjNKrSMLuyMCwgDrmTtkF1pm4Nm7CU45J/Hd6lauF2CDACTUYzu3ymcV7P0ZAhIoj6WRw=="],
+
+    "@sentry/cli": ["@sentry/cli@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli/-/cli-2.43.1.tgz", { "dependencies": { "https-proxy-agent": "^5.0.0", "node-fetch": "^2.6.7", "progress": "^2.0.3", "proxy-from-env": "^1.1.0", "which": "^2.0.2" }, "optionalDependencies": { "@sentry/cli-darwin": "2.43.1", "@sentry/cli-linux-arm": "2.43.1", "@sentry/cli-linux-arm64": "2.43.1", "@sentry/cli-linux-i686": "2.43.1", "@sentry/cli-linux-x64": "2.43.1", "@sentry/cli-win32-arm64": "2.43.1", "@sentry/cli-win32-i686": "2.43.1", "@sentry/cli-win32-x64": "2.43.1" }, "bin": { "sentry-cli": "bin/sentry-cli" } }, "sha512-5jg8cy4LlPnmgI6FkxClDRB5hFWzmlq7VZqj5o6Zdm5KRywzCn2s18GXyC1LPf6MFHw3AZ/K2h5pUZmJdWUBFQ=="],
+
+    "@sentry/cli-darwin": ["@sentry/cli-darwin@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-darwin/-/cli-darwin-2.43.1.tgz", { "os": "darwin" }, "sha512-622g/UyhTi1zC0Nnnbto75gNkExwwjv1cnRA4ERwfPgiOI3UK0/j+m4CcosqrfdTK55pv+SiifOlmvDPZnMIZw=="],
+
+    "@sentry/cli-linux-arm": ["@sentry/cli-linux-arm@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-linux-arm/-/cli-linux-arm-2.43.1.tgz", { "os": [ "linux", "freebsd", ], "cpu": "arm" }, "sha512-eQKcfqMR9bg8HKR9UCwm8x3lGBMUu1wCQow2BwEX4NbY1GzniSHNH4MBY2ERpOsfCA0LM5xEWQk/QFXexz1Dhw=="],
+
+    "@sentry/cli-linux-arm64": ["@sentry/cli-linux-arm64@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-linux-arm64/-/cli-linux-arm64-2.43.1.tgz", { "os": [ "linux", "freebsd", ], "cpu": "arm64" }, "sha512-c1P7eZqdDwRlePBSQSgWYUi80W5ywvG/XxZFVecjdHDEYlo2BJTRirqZTqzKzI/Ekk8x5hOxNuBbP+m9FluDMw=="],
+
+    "@sentry/cli-linux-i686": ["@sentry/cli-linux-i686@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-linux-i686/-/cli-linux-i686-2.43.1.tgz", { "os": [ "linux", "freebsd", ], "cpu": "ia32" }, "sha512-VRhzmEOeA/nsQHkf3Jt8mbgZmdbAWURM18Y1uXVRI/mQzZaz6YAZ+IzQ6gANpUk+UfTdf1q0unZSAIOUuu19gA=="],
+
+    "@sentry/cli-linux-x64": ["@sentry/cli-linux-x64@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-linux-x64/-/cli-linux-x64-2.43.1.tgz", { "os": [ "linux", "freebsd", ], "cpu": "x64" }, "sha512-c8G4zdzxzdPOz+tV1LNwUz5UsPNnhEE13kMPesF81liawwznnBsDfeKf6t/87Eem4BgAPdsFlnqnffi4BdqkZQ=="],
+
+    "@sentry/cli-win32-arm64": ["@sentry/cli-win32-arm64@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-win32-arm64/-/cli-win32-arm64-2.43.1.tgz", { "os": "win32", "cpu": "arm64" }, "sha512-K+9td351lzUn51R/oHotyEkq7nzKWBm2ffhVAe4HXNh72MjhyIvonAhQUrGawIjn/aLHO+hq9iNaEXbCu6Hulg=="],
+
+    "@sentry/cli-win32-i686": ["@sentry/cli-win32-i686@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-win32-i686/-/cli-win32-i686-2.43.1.tgz", { "os": "win32", "cpu": "ia32" }, "sha512-Co7kj0o16xcUZRZY+VwMgpdDvOY2xAbR5Xg5NXv73nXdALgGWf+G5bntFz3baNmaSOYWKJjvZT7a+YLwe/DihQ=="],
+
+    "@sentry/cli-win32-x64": ["@sentry/cli-win32-x64@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-win32-x64/-/cli-win32-x64-2.43.1.tgz", { "os": "win32", "cpu": "x64" }, "sha512-uH7l4FXc6s0GoJeriU6kQOYzREqDGB7b16XbTKY+lnhMNvBgP2aaOUQ9yRLbEHeSSg/112SQeolCnF2GwTmoKw=="],
 
     "@sentry/core": ["@sentry/core@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-9.14.0.tgz", {}, "sha512-OLfucnP3LAL5bxVNWc2RVOHCX7fk9Er5bWPCS+O5cPjqNUUz0HQHhVh2Vhei5C0kYZZM4vy4BQit5T9LrlOaNA=="],
 
@@ -374,6 +393,8 @@
     "process": ["process@0.11.10", "", {}, "sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A=="],
 
     "process-warning": ["process-warning@4.0.1", "", {}, "sha512-3c2LzQ3rY9d0hc1emcsHhfT9Jwz0cChib/QN89oME2R451w5fy3f0afAhERFZAwrbDU43wk12d0ORBpDVME50Q=="],
+
+    "progress": ["progress@2.0.3", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/progress/-/progress-2.0.3.tgz", {}, "sha512-7PiHtLll5LdnKIMw100I+8xJXR5gW2QwWYkT6iJva0bXitZKa/XMrSbdmg3r2Xnaidz9Qumd0VPaMrZlF9V9sA=="],
 
     "proxy-from-env": ["proxy-from-env@1.1.0", "", {}, "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="],
 

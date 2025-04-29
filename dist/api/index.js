@@ -11,6 +11,7 @@ const constants_1 = require("../src/constants");
 const server_1 = require("../src/server");
 const hubspot_1 = require("../src/hubspot");
 const elevenLabs_1 = require("../src/elevenLabs");
+require("../instrument.js");
 // Load environment variables from .env file
 dotenv_1.default.config();
 // Check for required environment variables
@@ -419,12 +420,17 @@ server.register(async (fastifyInstance) => {
     });
 });
 // Start the Fastify server
-server.listen({ port: constants_1.PORT, host: '0.0.0.0' }, err => {
+server.listen({ port: constants_1.PORT, host: process.env.NODE_ENV === 'development' ? 'localhost' : '0.0.0.0' }, err => {
     if (err) {
         console.error('Error starting server:', err);
         process.exit(1);
     }
-    console.log(`[Server] Listening on http://0.0.0.0:${constants_1.PORT}`);
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`[Server] Listening on http://localhost:${constants_1.PORT}`);
+    }
+    else {
+        console.log(`[Server] Listening on http://0.0.0.0:${constants_1.PORT}`);
+    }
 });
 // Root route for health check
 server.get('/', async (_, reply) => {
@@ -484,3 +490,8 @@ server.all('/hubspot', async (request) => {
     });
     return response;
 });
+server.get('/debug-sentry', () => {
+    throw new Error('testing Sentry');
+});
+!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e27bcd64-6e88-5bf6-9cd8-a6fe3d50fb7e")}catch(e){}}();
+//# debugId=e27bcd64-6e88-5bf6-9cd8-a6fe3d50fb7e
