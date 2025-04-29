@@ -7,6 +7,7 @@ import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
 import { ELEVENLABS } from '../src/elevenLabs'
 import { CallEvent } from '../types/twilio'
+import './instrument.js'
 
 // Load environment variables from .env file
 dotenv.config()
