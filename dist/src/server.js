@@ -49,5 +49,3 @@ const createServer = () => {
     return server;
 };
 exports.createServer = createServer;
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="d56d9094-0d82-5abc-a7f9-a08a7443a964")}catch(e){}}();
-//# debugId=d56d9094-0d82-5abc-a7f9-a08a7443a964

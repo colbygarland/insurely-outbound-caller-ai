@@ -493,5 +493,3 @@ server.all('/hubspot', async (request) => {
 server.get('/debug-sentry', () => {
     throw new Error('testing Sentry');
 });
-!function(){try{var e="undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof globalThis?globalThis:"undefined"!=typeof self?self:{},n=(new e.Error).stack;n&&(e._sentryDebugIds=e._sentryDebugIds||{},e._sentryDebugIds[n]="e27bcd64-6e88-5bf6-9cd8-a6fe3d50fb7e")}catch(e){}}();
-//# debugId=e27bcd64-6e88-5bf6-9cd8-a6fe3d50fb7e
