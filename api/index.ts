@@ -569,5 +569,7 @@ server.all('/hubspot', async (request: any) => {
 })
 
 server.get('/debug-sentry', () => {
+  console.log('.log')
+  console.error('.error')
   throw new Error('testing Sentry')
 })

@@ -491,5 +491,7 @@ server.all('/hubspot', async (request) => {
     return response;
 });
 server.get('/debug-sentry', () => {
+    console.log('.log');
+    console.error('.error');
     throw new Error('testing Sentry');
 });

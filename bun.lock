@@ -7,7 +7,9 @@
         "@fastify/formbody": "^8.0.2",
         "@fastify/websocket": "^11.0.2",
         "@hubspot/api-client": "^12.0.1",
+        "@sentry/browser": "^9.15.0",
         "@sentry/cli": "^2.43.1",
+        "@sentry/integrations": "^7.114.0",
         "@sentry/node": "^9.14.0",
         "dotenv": "^16.4.7",
         "elevenlabs": "^1.56.0",
@@ -114,6 +116,16 @@
 
     "@prisma/instrumentation": ["@prisma/instrumentation@6.6.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@prisma/instrumentation/-/instrumentation-6.6.0.tgz", { "dependencies": { "@opentelemetry/instrumentation": "^0.52.0 || ^0.53.0 || ^0.54.0 || ^0.55.0 || ^0.56.0 || ^0.57.0" }, "peerDependencies": { "@opentelemetry/api": "^1.8" } }, "sha512-M/a6njz3hbf2oucwdbjNKrSMLuyMCwgDrmTtkF1pm4Nm7CU45J/Hd6lauF2CDACTUYzu3ymcV7P0ZAhIoj6WRw=="],
 
+    "@sentry-internal/browser-utils": ["@sentry-internal/browser-utils@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry-internal/browser-utils/-/browser-utils-9.15.0.tgz", { "dependencies": { "@sentry/core": "9.15.0" } }, "sha512-tIM+9zXCefkInRiNmBkXKgkamRjEOlAcf768cBKlMWVOatfNrSEB0UEV7qkAYqnQGWkbPkHFMbFJxWptydLODw=="],
+
+    "@sentry-internal/feedback": ["@sentry-internal/feedback@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry-internal/feedback/-/feedback-9.15.0.tgz", { "dependencies": { "@sentry/core": "9.15.0" } }, "sha512-jyN0r57WL8V5ViwZpiNvbIhF9I89jxn6mtIQcyV85EjIXDyzJmeTgxc/FIU0kcDVv6zso3qnGRJUxGK+GvoYZg=="],
+
+    "@sentry-internal/replay": ["@sentry-internal/replay@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry-internal/replay/-/replay-9.15.0.tgz", { "dependencies": { "@sentry-internal/browser-utils": "9.15.0", "@sentry/core": "9.15.0" } }, "sha512-lv6ENRmfeBuod6Tr1WgLeF0+wIIXlHWNAGofsaNUvm8UKS7USicFsQWKOZPk4UyjTfrEClPp2vx+o7aUcZS6TQ=="],
+
+    "@sentry-internal/replay-canvas": ["@sentry-internal/replay-canvas@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry-internal/replay-canvas/-/replay-canvas-9.15.0.tgz", { "dependencies": { "@sentry-internal/replay": "9.15.0", "@sentry/core": "9.15.0" } }, "sha512-a1/oiXwcW5OmILjD7/R2UEsPQWXJBUr0u388uCKDUGeyXLxBBbIJGS5E8oLwVQLVxhVJrODgxvT19z9OVcbn7g=="],
+
+    "@sentry/browser": ["@sentry/browser@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/browser/-/browser-9.15.0.tgz", { "dependencies": { "@sentry-internal/browser-utils": "9.15.0", "@sentry-internal/feedback": "9.15.0", "@sentry-internal/replay": "9.15.0", "@sentry-internal/replay-canvas": "9.15.0", "@sentry/core": "9.15.0" } }, "sha512-ppHESKFVQFpAb3rQI2ateDkmMytVcvAWsjZrZ3hF9iEnO3iTIIu32ib5nqQUL4KKXZQovYnDrSlDcdv3ZwX/8Q=="],
+
     "@sentry/cli": ["@sentry/cli@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli/-/cli-2.43.1.tgz", { "dependencies": { "https-proxy-agent": "^5.0.0", "node-fetch": "^2.6.7", "progress": "^2.0.3", "proxy-from-env": "^1.1.0", "which": "^2.0.2" }, "optionalDependencies": { "@sentry/cli-darwin": "2.43.1", "@sentry/cli-linux-arm": "2.43.1", "@sentry/cli-linux-arm64": "2.43.1", "@sentry/cli-linux-i686": "2.43.1", "@sentry/cli-linux-x64": "2.43.1", "@sentry/cli-win32-arm64": "2.43.1", "@sentry/cli-win32-i686": "2.43.1", "@sentry/cli-win32-x64": "2.43.1" }, "bin": { "sentry-cli": "bin/sentry-cli" } }, "sha512-5jg8cy4LlPnmgI6FkxClDRB5hFWzmlq7VZqj5o6Zdm5KRywzCn2s18GXyC1LPf6MFHw3AZ/K2h5pUZmJdWUBFQ=="],
 
     "@sentry/cli-darwin": ["@sentry/cli-darwin@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-darwin/-/cli-darwin-2.43.1.tgz", { "os": "darwin" }, "sha512-622g/UyhTi1zC0Nnnbto75gNkExwwjv1cnRA4ERwfPgiOI3UK0/j+m4CcosqrfdTK55pv+SiifOlmvDPZnMIZw=="],
@@ -132,11 +144,17 @@
 
     "@sentry/cli-win32-x64": ["@sentry/cli-win32-x64@2.43.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/cli-win32-x64/-/cli-win32-x64-2.43.1.tgz", { "os": "win32", "cpu": "x64" }, "sha512-uH7l4FXc6s0GoJeriU6kQOYzREqDGB7b16XbTKY+lnhMNvBgP2aaOUQ9yRLbEHeSSg/112SQeolCnF2GwTmoKw=="],
 
-    "@sentry/core": ["@sentry/core@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-9.14.0.tgz", {}, "sha512-OLfucnP3LAL5bxVNWc2RVOHCX7fk9Er5bWPCS+O5cPjqNUUz0HQHhVh2Vhei5C0kYZZM4vy4BQit5T9LrlOaNA=="],
+    "@sentry/core": ["@sentry/core@9.15.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-9.15.0.tgz", {}, "sha512-lBmo3bzzaYUesdzc2H5K3fajfXyUNuj5koqyFoCAI8rnt9CBl7SUc/P07+E5eipF8mxgiU3QtkI7ALzRQN8pqQ=="],
+
+    "@sentry/integrations": ["@sentry/integrations@7.114.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/integrations/-/integrations-7.114.0.tgz", { "dependencies": { "@sentry/core": "7.114.0", "@sentry/types": "7.114.0", "@sentry/utils": "7.114.0", "localforage": "^1.8.1" } }, "sha512-BJIBWXGKeIH0ifd7goxOS29fBA8BkEgVVCahs6xIOXBjX1IRS6PmX0zYx/GP23nQTfhJiubv2XPzoYOlZZmDxg=="],
 
     "@sentry/node": ["@sentry/node@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/node/-/node-9.14.0.tgz", { "dependencies": { "@opentelemetry/api": "^1.9.0", "@opentelemetry/context-async-hooks": "^1.30.1", "@opentelemetry/core": "^1.30.1", "@opentelemetry/instrumentation": "^0.57.2", "@opentelemetry/instrumentation-amqplib": "^0.46.1", "@opentelemetry/instrumentation-connect": "0.43.1", "@opentelemetry/instrumentation-dataloader": "0.16.1", "@opentelemetry/instrumentation-express": "0.47.1", "@opentelemetry/instrumentation-fastify": "0.44.2", "@opentelemetry/instrumentation-fs": "0.19.1", "@opentelemetry/instrumentation-generic-pool": "0.43.1", "@opentelemetry/instrumentation-graphql": "0.47.1", "@opentelemetry/instrumentation-hapi": "0.45.2", "@opentelemetry/instrumentation-http": "0.57.2", "@opentelemetry/instrumentation-ioredis": "0.47.1", "@opentelemetry/instrumentation-kafkajs": "0.7.1", "@opentelemetry/instrumentation-knex": "0.44.1", "@opentelemetry/instrumentation-koa": "0.47.1", "@opentelemetry/instrumentation-lru-memoizer": "0.44.1", "@opentelemetry/instrumentation-mongodb": "0.52.0", "@opentelemetry/instrumentation-mongoose": "0.46.1", "@opentelemetry/instrumentation-mysql": "0.45.1", "@opentelemetry/instrumentation-mysql2": "0.45.2", "@opentelemetry/instrumentation-pg": "0.51.1", "@opentelemetry/instrumentation-redis-4": "0.46.1", "@opentelemetry/instrumentation-tedious": "0.18.1", "@opentelemetry/instrumentation-undici": "0.10.1", "@opentelemetry/resources": "^1.30.1", "@opentelemetry/sdk-trace-base": "^1.30.1", "@opentelemetry/semantic-conventions": "^1.30.0", "@prisma/instrumentation": "6.6.0", "@sentry/core": "9.14.0", "@sentry/opentelemetry": "9.14.0", "import-in-the-middle": "^1.13.0" } }, "sha512-AWPc6O+zAdSgnsiKm6Nb1txyiKCOIBriJEONdXFSslgZgkm8EWAYRRHyS2Hkmnz0/5bEQ3jEffIw22qJuaHN+Q=="],
 
     "@sentry/opentelemetry": ["@sentry/opentelemetry@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/opentelemetry/-/opentelemetry-9.14.0.tgz", { "dependencies": { "@sentry/core": "9.14.0" }, "peerDependencies": { "@opentelemetry/api": "^1.9.0", "@opentelemetry/context-async-hooks": "^1.30.1", "@opentelemetry/core": "^1.30.1", "@opentelemetry/instrumentation": "^0.57.1", "@opentelemetry/sdk-trace-base": "^1.30.1", "@opentelemetry/semantic-conventions": "^1.28.0" } }, "sha512-NnHJjSQGpWaZ6+0QK9Xn1T3CTOM16Ij07VnSiGmVz3/IMsNC1/jndqc8p9BxEI+67XhZjOUUN0Ogpq1XRY7YeA=="],
+
+    "@sentry/types": ["@sentry/types@7.114.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/types/-/types-7.114.0.tgz", {}, "sha512-tsqkkyL3eJtptmPtT0m9W/bPLkU7ILY7nvwpi1hahA5jrM7ppoU0IMaQWAgTD+U3rzFH40IdXNBFb8Gnqcva4w=="],
+
+    "@sentry/utils": ["@sentry/utils@7.114.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/utils/-/utils-7.114.0.tgz", { "dependencies": { "@sentry/types": "7.114.0" } }, "sha512-319N90McVpupQ6vws4+tfCy/03AdtsU0MurIE4+W5cubHME08HtiEWlfacvAxX+yuKFhvdsO4K4BB/dj54ideg=="],
 
     "@types/bun": ["@types/bun@1.2.5", "", { "dependencies": { "bun-types": "1.2.5" } }, "sha512-w2OZTzrZTVtbnJew1pdFmgV99H0/L+Pvw+z1P67HaR18MHOzYnTYOi6qzErhK8HyT+DB782ADVPPE92Xu2/Opg=="],
 
@@ -296,6 +314,8 @@
 
     "ieee754": ["ieee754@1.2.1", "", {}, "sha512-dcyqhDvX1C46lXZcVqCpK+FtMRQVdIMN6/Df5js2zouUsqG7I6sFxitIC+7KYK29KdXOLHdu9zL4sFnoVQnqaA=="],
 
+    "immediate": ["immediate@3.0.6", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/immediate/-/immediate-3.0.6.tgz", {}, "sha512-XXOFtyqDjNDAQxVfYxuF7g9Il/IbWmmlQg2MYKOH8ExIT1qg6xc4zyS3HaEEATgs1btfzxq15ciUiY7gjSXRGQ=="],
+
     "import-in-the-middle": ["import-in-the-middle@1.13.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/import-in-the-middle/-/import-in-the-middle-1.13.1.tgz", { "dependencies": { "acorn": "^8.14.0", "acorn-import-attributes": "^1.9.5", "cjs-module-lexer": "^1.2.2", "module-details-from-path": "^1.0.3" } }, "sha512-k2V9wNm9B+ysuelDTHjI9d5KPc4l8zAZTGqj+pcynvWkypZd857ryzN8jNC7Pg2YZXNMJcHRPpaDyCBbNyVRpA=="],
 
     "inherits": ["inherits@2.0.4", "", {}, "sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ=="],
@@ -318,7 +338,11 @@
 
     "jws": ["jws@3.2.2", "", { "dependencies": { "jwa": "^1.4.1", "safe-buffer": "^5.0.1" } }, "sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA=="],
 
+    "lie": ["lie@3.1.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/lie/-/lie-3.1.1.tgz", { "dependencies": { "immediate": "~3.0.5" } }, "sha512-RiNhHysUjhrDQntfYSfY4MU24coXXdEOgw9WGcKHNeEwffDYbF//u87M1EWaMGzuFoSbqW0C9C6lEEhDOAswfw=="],
+
     "light-my-request": ["light-my-request@6.6.0", "", { "dependencies": { "cookie": "^1.0.1", "process-warning": "^4.0.0", "set-cookie-parser": "^2.6.0" } }, "sha512-CHYbu8RtboSIoVsHZ6Ye4cj4Aw/yg2oAFimlF7mNvfDV192LR7nDiKtSIfCuLT7KokPSTn/9kfVLm5OGN0A28A=="],
+
+    "localforage": ["localforage@1.10.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/localforage/-/localforage-1.10.0.tgz", { "dependencies": { "lie": "3.1.1" } }, "sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg=="],
 
     "lodash.get": ["lodash.get@4.4.2", "", {}, "sha512-z+Uw/vLuy6gQe8cfaFWD7p0wVv8fJl3mbzXh33RS+0oW2wvUqiRXiQ69gLWSLpgB5/6sU+r6BlQR0MBILadqTQ=="],
 
@@ -503,6 +527,12 @@
     "@opentelemetry/resources/@opentelemetry/semantic-conventions": ["@opentelemetry/semantic-conventions@1.28.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@opentelemetry/semantic-conventions/-/semantic-conventions-1.28.0.tgz", {}, "sha512-lp4qAiMTD4sNWW4DbKLBkfiMZ4jbAboJIGOQr5DvciMRI494OapieI9qiODpOt0XBr1LjIDy1xAGAnVs5supTA=="],
 
     "@opentelemetry/sdk-trace-base/@opentelemetry/semantic-conventions": ["@opentelemetry/semantic-conventions@1.28.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@opentelemetry/semantic-conventions/-/semantic-conventions-1.28.0.tgz", {}, "sha512-lp4qAiMTD4sNWW4DbKLBkfiMZ4jbAboJIGOQr5DvciMRI494OapieI9qiODpOt0XBr1LjIDy1xAGAnVs5supTA=="],
+
+    "@sentry/integrations/@sentry/core": ["@sentry/core@7.114.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-7.114.0.tgz", { "dependencies": { "@sentry/types": "7.114.0", "@sentry/utils": "7.114.0" } }, "sha512-YnanVlmulkjgZiVZ9BfY9k6I082n+C+LbZo52MTvx3FY6RE5iyiPMpaOh67oXEZRWcYQEGm+bKruRxLVP6RlbA=="],
+
+    "@sentry/node/@sentry/core": ["@sentry/core@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-9.14.0.tgz", {}, "sha512-OLfucnP3LAL5bxVNWc2RVOHCX7fk9Er5bWPCS+O5cPjqNUUz0HQHhVh2Vhei5C0kYZZM4vy4BQit5T9LrlOaNA=="],
+
+    "@sentry/opentelemetry/@sentry/core": ["@sentry/core@9.14.0", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@sentry/core/-/core-9.14.0.tgz", {}, "sha512-OLfucnP3LAL5bxVNWc2RVOHCX7fk9Er5bWPCS+O5cPjqNUUz0HQHhVh2Vhei5C0kYZZM4vy4BQit5T9LrlOaNA=="],
 
     "@types/node-fetch/form-data": ["form-data@4.0.2", "", { "dependencies": { "asynckit": "^0.4.0", "combined-stream": "^1.0.8", "es-set-tostringtag": "^2.1.0", "mime-types": "^2.1.12" } }, "sha512-hGfm/slu0ZabnNt4oaRZ6uREyfCj6P4fT/n6A1rGV+Z0VdGXjfOhVUpkn6qVQONHGIFwmveGXyDs75+nr6FM8w=="],
 
