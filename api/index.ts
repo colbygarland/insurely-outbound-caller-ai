@@ -7,6 +7,7 @@ import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
 import { ELEVENLABS } from '../src/elevenLabs'
 import { CallEvent } from '../types/twilio'
+import '../instrument.js'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -488,12 +489,17 @@ server.register(async fastifyInstance => {
 })
 
 // Start the Fastify server
-server.listen({ port: PORT, host: '0.0.0.0' }, err => {
+server.listen({ port: PORT, host: process.env.NODE_ENV === 'development' ? 'localhost' : '0.0.0.0' }, err => {
   if (err) {
     console.error('Error starting server:', err)
     process.exit(1)
   }
-  console.log(`[Server] Listening on http://0.0.0.0:${PORT}`)
+
+  if (process.env.NODE_ENV === 'development') {
+    console.log(`[Server] Listening on http://localhost:${PORT}`)
+  } else {
+    console.log(`[Server] Listening on http://0.0.0.0:${PORT}`)
+  }
 })
 
 // Root route for health check
@@ -560,4 +566,8 @@ server.all('/hubspot', async (request: any) => {
     skipMeeting,
   })
   return response
+})
+
+server.get('/debug-sentry', () => {
+  throw new Error('testing Sentry')
 })
