@@ -104,7 +104,7 @@ export const HUBSPOT = {
       })
       const json = await response.json()
       console.log(`[Hubspot API bookMeeting] json = ${JSON.stringify(json)}`)
-      if (json.error) {
+      if (json?.status === 'error') {
         throw new Error(json)
       }
       return json
