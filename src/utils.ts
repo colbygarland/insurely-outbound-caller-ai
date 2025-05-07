@@ -114,6 +114,28 @@ export const escapeXML = (unsafe: string) => {
     .replaceAll(/\n/g, ' ')
 }
 
+// Helper function to convert day and time to UTC timestamp
+function convertToUTC(day: string, time: string, timezone: string): number {
+  // Get current year
+  const year = new Date().getFullYear()
+  
+  // Create a date string that includes the year
+  const dateString = `${day} ${year} ${time}`
+  
+  // Create a date object in the user's timezone
+  const userDate = new Date(dateString)
+  
+  // Convert to UTC by creating a new date with the timezone offset
+  const utcDate = new Date(userDate.toLocaleString('en-US', { timeZone: timezone }))
+  
+  console.log(`[Timezone Debug] Input: ${dateString}`)
+  console.log(`[Timezone Debug] User's timezone: ${timezone}`)
+  console.log(`[Timezone Debug] Local time: ${userDate.toLocaleString('en-US')}`)
+  console.log(`[Timezone Debug] UTC time: ${utcDate.toISOString()}`)
+  
+  return utcDate.getTime()
+}
+
 export const handleBookMeetingInHubspot = async ({
   email,
   phone,
@@ -149,21 +171,8 @@ export const handleBookMeetingInHubspot = async ({
 
   const user = users?.[0] ?? null
 
-  // Will this pigeon hole us if this is happening near the end of the year??
-  const year = new Date().getFullYear()
-  // Create a date string in the user's timezone
-  const dateString = `${day} ${year} ${time}`
-  
-  // Create a date object in the user's timezone
-  const userDate = new Date(dateString)
-  
-  // Convert to UTC for Hubspot
-  const utcDate = new Date(userDate.toLocaleString('en-US', { timeZone: timezone }))
-  const startTime = utcDate.getTime()
-  
-  console.log(`[Hubspot] User's local time: ${userDate.toLocaleString('en-US', { timeZone: timezone })}`)
-  console.log(`[Hubspot] UTC time: ${utcDate.toISOString()}`)
-  console.log(`[Hubspot] start time: ${startTime}`)
+  const startTime = convertToUTC(day, time, timezone)
+  console.log(`[Hubspot] Final UTC timestamp: ${startTime}`)
 
   if (skipMeeting) {
     console.log(`[Hubspot] Book meeting is false, not booking meeting`)
