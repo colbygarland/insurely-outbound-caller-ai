@@ -120,13 +120,26 @@ function convertToUTC(day: string, time: string, timezone: string): number {
   // Get current year
   const year = new Date().getFullYear()
 
-  // Parse the date in the local timezone (Edmonton)
-  const local = DateTime.fromFormat(`${day} ${time} ${year}`, 'LLLL d HH:mm yyyy', {
+  // Parse the date in the local timezone
+  const inputString = `${day} ${time} ${year}`
+  console.log(`[Timezone Debug] Input string: ${inputString}`)
+
+  const local = DateTime.fromFormat(inputString, 'LLLL d HH:mm yyyy', {
     zone: timezone,
   })
 
+  if (!local.isValid) {
+    console.error(`[Timezone Debug] Invalid date: ${local.invalidReason} - ${local.invalidExplanation}`)
+    throw new Error(`Invalid date format: ${inputString}`)
+  }
+
   // Convert to UTC and get Unix timestamp
   const utc = local.toUTC()
+  console.log(`[Timezone Debug] Local time: ${local.toString()}`)
+  console.log(`[Timezone Debug] UTC time: ${utc.toString()}`)
+  console.log(`[Timezone Debug] Local milli: ${local.toMillis()}`)
+  console.log(`[Timezone Debug] UTC milli: ${utc.toMillis()}`)
+
   return Math.floor(utc.toMillis())
 }
 
