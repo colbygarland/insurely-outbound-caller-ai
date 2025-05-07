@@ -116,7 +116,7 @@ export const escapeXML = (unsafe: string) => {
 }
 
 // Helper function to convert day and time to UTC timestamp
-function convertToUTC(day: string, time: string, timezone: string): number {
+function convertToUTC(day: string, time: string, timezone: string): string {
   // Get current year
   const year = new Date().getFullYear()
 
@@ -140,7 +140,7 @@ function convertToUTC(day: string, time: string, timezone: string): number {
   console.log(`[Timezone Debug] Local milli: ${local.toMillis()}`)
   console.log(`[Timezone Debug] UTC milli: ${utc.toMillis()}`)
 
-  return Math.floor(utc.toMillis())
+  return utc.toString()
 }
 
 export const handleBookMeetingInHubspot = async ({

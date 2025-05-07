@@ -73,7 +73,7 @@ export const HUBSPOT = {
   }: {
     firstName: string
     lastName: string
-    startTime: number // JS unix timestamp
+    startTime: string // 2025-05-09T20:58:00.000Z
     email: string
     ownerId?: string // the owner of the contact in Hubspot, might be empty
     phone: string
