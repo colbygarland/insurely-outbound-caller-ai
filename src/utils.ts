@@ -1,6 +1,7 @@
 import type { Twilio as TwilioInterface } from 'twilio'
 import Twilio from 'twilio'
 import { HUBSPOT } from './hubspot'
+import { DateTime } from 'luxon'
 
 // Helper function to get signed URL for authenticated conversations
 export async function getSignedUrl(agentId: string, apiKey: string) {
@@ -118,22 +119,15 @@ export const escapeXML = (unsafe: string) => {
 function convertToUTC(day: string, time: string, timezone: string): number {
   // Get current year
   const year = new Date().getFullYear()
-  
-  // Create a date string that includes the year
-  const dateString = `${day} ${year} ${time}`
-  
-  // Create a date object in the user's timezone
-  const userDate = new Date(dateString)
-  
-  // Convert to UTC by creating a new date with the timezone offset
-  const utcDate = new Date(userDate.toLocaleString('en-US', { timeZone: timezone }))
-  
-  console.log(`[Timezone Debug] Input: ${dateString}`)
-  console.log(`[Timezone Debug] User's timezone: ${timezone}`)
-  console.log(`[Timezone Debug] Local time: ${userDate.toLocaleString('en-US')}`)
-  console.log(`[Timezone Debug] UTC time: ${utcDate.toISOString()}`)
-  
-  return utcDate.getTime()
+
+  // Parse the date in the local timezone (Edmonton)
+  const local = DateTime.fromFormat(`${day} ${time} ${year}`, 'LLLL d HH:mm yyyy', {
+    zone: timezone,
+  })
+
+  // Convert to UTC and get Unix timestamp
+  const utc = local.toUTC()
+  return Math.floor(utc.toSeconds())
 }
 
 export const handleBookMeetingInHubspot = async ({

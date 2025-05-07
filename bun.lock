@@ -14,12 +14,14 @@
         "dotenv": "^16.4.7",
         "elevenlabs": "^1.56.0",
         "fastify": "^5.2.1",
+        "luxon": "^3.6.1",
         "twilio": "^5.4.5",
         "ws": "^8.18.1",
       },
       "devDependencies": {
         "@types/bun": "latest",
         "@types/dotenv": "^8.2.3",
+        "@types/luxon": "^3.6.2",
         "@types/twilio": "^3.19.3",
         "@types/ws": "^8.18.0",
         "prettier": "^3.5.3",
@@ -161,6 +163,8 @@
     "@types/connect": ["@types/connect@3.4.38", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/connect/-/connect-3.4.38.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-K6uROf1LD88uDQqJCktA4yzL1YYAK6NgfsI0v/mTgyPKWsX1CnJ0XPSDhViejru1GcRkLWb8RlzFYJRqGUbaug=="],
 
     "@types/dotenv": ["@types/dotenv@8.2.3", "", { "dependencies": { "dotenv": "*" } }, "sha512-g2FXjlDX/cYuc5CiQvyU/6kkbP1JtmGzh0obW50zD7OKeILVL0NSpPWLXVfqoAGQjom2/SLLx9zHq0KXvD6mbw=="],
+
+    "@types/luxon": ["@types/luxon@3.6.2", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/luxon/-/luxon-3.6.2.tgz", {}, "sha512-R/BdP7OxEMc44l2Ex5lSXHoIXTB2JLNa3y2QISIbr58U/YcsffyQrYW//hZSdrfxrjRZj3GcUoxMPGdO8gSYuw=="],
 
     "@types/mysql": ["@types/mysql@2.15.26", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/@types/mysql/-/mysql-2.15.26.tgz", { "dependencies": { "@types/node": "*" } }, "sha512-DSLCOXhkvfS5WNNPbfn2KdICAmk8lLc+/PNvnPnF7gOdMZCxopXduqv0OQ13y/yA/zXTSikZZqVgybUxOEg6YQ=="],
 
@@ -361,6 +365,8 @@
     "lodash.merge": ["lodash.merge@4.6.2", "", {}, "sha512-0KpjqXRVvrYyCsX1swR/XTK0va6VQkQM6MNo7PqW77ByjAhoARA8EfrP1N4+KlKj8YS0ZUCtRT/YUuhyYDujIQ=="],
 
     "lodash.once": ["lodash.once@4.1.1", "", {}, "sha512-Sb487aTOCr9drQVL8pIxOzVhafOjZN9UU54hiN8PU3uAiSV7lx1yYNpbNmex2PK6dSJoNTSJUUswT651yww3Mg=="],
+
+    "luxon": ["luxon@3.6.1", "https://artifactory.hootops.com:443/artifactory/api/npm/hootsuite-npm/luxon/-/luxon-3.6.1.tgz", {}, "sha512-tJLxrKJhO2ukZ5z0gyjY1zPh3Rh88Ej9P7jNrZiHMUXHae1yvI2imgOZtL1TO8TW6biMMKfTtAOoEJANgtWBMQ=="],
 
     "math-intrinsics": ["math-intrinsics@1.1.0", "", {}, "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g=="],
 

@@ -23,15 +23,17 @@
     "dotenv": "^16.4.7",
     "elevenlabs": "^1.56.0",
     "fastify": "^5.2.1",
+    "luxon": "^3.6.1",
     "twilio": "^5.4.5",
     "ws": "^8.18.1"
   },
   "devDependencies": {
+    "@types/bun": "latest",
     "@types/dotenv": "^8.2.3",
+    "@types/luxon": "^3.6.2",
     "@types/twilio": "^3.19.3",
     "@types/ws": "^8.18.0",
-    "prettier": "^3.5.3",
-    "@types/bun": "latest"
+    "prettier": "^3.5.3"
   },
   "private": true,
   "peerDependencies": {

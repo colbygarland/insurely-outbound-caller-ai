@@ -8,6 +8,7 @@ exports.getSignedUrl = getSignedUrl;
 exports.handleTransferCall = handleTransferCall;
 const twilio_1 = __importDefault(require("twilio"));
 const hubspot_1 = require("./hubspot");
+const luxon_1 = require("luxon");
 // Helper function to get signed URL for authenticated conversations
 async function getSignedUrl(agentId, apiKey) {
     try {
@@ -97,17 +98,13 @@ exports.escapeXML = escapeXML;
 function convertToUTC(day, time, timezone) {
     // Get current year
     const year = new Date().getFullYear();
-    // Create a date string that includes the year
-    const dateString = `${day} ${year} ${time}`;
-    // Create a date object in the user's timezone
-    const userDate = new Date(dateString);
-    // Convert to UTC by creating a new date with the timezone offset
-    const utcDate = new Date(userDate.toLocaleString('en-US', { timeZone: timezone }));
-    console.log(`[Timezone Debug] Input: ${dateString}`);
-    console.log(`[Timezone Debug] User's timezone: ${timezone}`);
-    console.log(`[Timezone Debug] Local time: ${userDate.toLocaleString('en-US')}`);
-    console.log(`[Timezone Debug] UTC time: ${utcDate.toISOString()}`);
-    return utcDate.getTime();
+    // Parse the date in the local timezone (Edmonton)
+    const local = luxon_1.DateTime.fromFormat(`${day} ${time} ${year}`, 'LLLL d HH:mm yyyy', {
+        zone: timezone,
+    });
+    // Convert to UTC and get Unix timestamp
+    const utc = local.toUTC();
+    return Math.floor(utc.toSeconds());
 }
 const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, }) => {
     if (!email || !firstName || !lastName || !day || !time) {
