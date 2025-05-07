@@ -104,7 +104,7 @@ function convertToUTC(day, time, timezone) {
     });
     // Convert to UTC and get Unix timestamp
     const utc = local.toUTC();
-    return Math.floor(utc.toSeconds());
+    return Math.floor(utc.toMillis());
 }
 const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, }) => {
     if (!email || !firstName || !lastName || !day || !time) {

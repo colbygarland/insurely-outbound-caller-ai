@@ -127,7 +127,7 @@ function convertToUTC(day: string, time: string, timezone: string): number {
 
   // Convert to UTC and get Unix timestamp
   const utc = local.toUTC()
-  return Math.floor(utc.toSeconds())
+  return Math.floor(utc.toMillis())
 }
 
 export const handleBookMeetingInHubspot = async ({
