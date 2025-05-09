@@ -1,6 +1,6 @@
 import type { Twilio as TwilioInterface } from 'twilio'
 import Twilio from 'twilio'
-import { HUBSPOT } from './hubspot'
+import { HUBSPOT } from '../hubspot'
 import { DateTime } from 'luxon'
 
 // Helper function to get signed URL for authenticated conversations
@@ -116,7 +116,7 @@ export const escapeXML = (unsafe: string) => {
 }
 
 // Helper function to convert day and time to UTC timestamp
-function convertToUTC(day: string, time: string, timezone: string): string {
+export function convertToUTC(day: string, time: string, timezone: string): string {
   // Get current year
   const year = new Date().getFullYear()
 

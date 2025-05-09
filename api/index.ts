@@ -1,7 +1,7 @@
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { escapeXML, getSignedUrl, handleBookMeetingInHubspot, handleTransferCall } from '../src/utils'
+import { escapeXML, getSignedUrl, handleBookMeetingInHubspot, handleTransferCall } from '../src/utils/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
@@ -545,8 +545,8 @@ server.all('/incoming-call-eleven', async (request: any, reply) => {
     "lastName": "Garland",
     "phone": "780-882-4742",
     "email": "colbyrobyn2017@gmail.com",
-    "day": "April 30",
-    "time": "14:30:00",
+    "day": "May 9",
+    "time": "14:00",
     "timezone": "America/Edmonton",
     "skipMeeting": false
     }' | jq

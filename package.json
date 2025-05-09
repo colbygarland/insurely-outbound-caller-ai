@@ -6,6 +6,7 @@
     "dev": "bun --hot run api/index.ts",
     "buildNode": "npx tsc",
     "run": "node dist/api/index.js",
+    "test": "bun test",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org colby-garland --project outbound-agent-ai ./dist && sentry-cli sourcemaps upload --org colby-garland --project outbound-agent-ai ./dist"
   },
   "keywords": [],
