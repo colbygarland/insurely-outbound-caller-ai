@@ -8,6 +8,7 @@ import { HUBSPOT } from '../src/hubspot'
 import { ELEVENLABS } from '../src/elevenLabs'
 import { CallEvent } from '../types/twilio'
 import '../instrument.js'
+import { DateTime } from 'luxon'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -128,7 +129,8 @@ server.all('/outbound-call-twiml', async (request, reply) => {
   // @ts-expect-error
   const { email, firstName, lastName, phone, timezone } = request.query
   const agent = await ELEVENLABS.getAgent()
-  const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
+  const currentDay = new Date().toISOString()
+  const prompt = 'Today is ' + currentDay + '. ' + (agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT)
   const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
 
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
