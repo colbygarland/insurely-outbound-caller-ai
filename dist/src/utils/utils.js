@@ -140,7 +140,7 @@ const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, d
         lastName,
         email,
         startTime,
-        ownerId: user?.properties?.hubspot_owner_id,
+        ownerId: user?.properties?.hubspot_owner_id ?? undefined,
         phone,
     });
     if (!meetingResponse) {

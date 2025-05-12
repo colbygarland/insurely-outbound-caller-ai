@@ -98,7 +98,7 @@ exports.HUBSPOT = {
             properties: {
                 hs_timestamp: timestamp,
                 hs_call_title: 'Call with ElevenLabs',
-                hubspot_owner_id: ownerId,
+                ...(ownerId ? { hubspot_owner_id: ownerId } : {}),
                 hs_call_callee_object_id: id,
                 hs_call_body: metadata.body,
                 hs_call_duration: metadata.durationMilliseconds,
