@@ -109,7 +109,8 @@ server.all('/outbound-call-twiml', async (request, reply) => {
     // @ts-expect-error
     const { email, firstName, lastName, phone, timezone } = request.query;
     const agent = await elevenLabs_1.ELEVENLABS.getAgent();
-    const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? constants_1.PROMPT;
+    const currentDay = new Date().toISOString();
+    const prompt = 'Today is ' + currentDay + '. ' + (agent?.conversation_config?.agent?.prompt?.prompt ?? constants_1.PROMPT);
     const first_message = agent?.conversation_config?.agent?.first_message ?? constants_1.FIRST_MESSAGE;
     const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
     <Response>
