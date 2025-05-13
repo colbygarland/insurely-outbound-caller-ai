@@ -73,6 +73,8 @@ server.post('/outbound-call', async (request, reply) => {
       callSid: call.sid,
     })
 
+    console.log(`[Twilio] Call initiated to ${number}`)
+
     reply.send({
       success: true,
       message: 'Call initiated',
