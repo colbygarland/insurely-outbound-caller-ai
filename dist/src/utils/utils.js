@@ -117,22 +117,28 @@ function convertToUTC(day, time, timezone) {
     console.log(`[Timezone Debug] UTC milli: ${utc.toMillis()}`);
     return utc.toString();
 }
-const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, }) => {
+const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, id, }) => {
     if (!email || !firstName || !lastName || !day || !time) {
         console.error(`[Hubspot] missing required parameters`);
         throw new Error('One of [email, firstName, lastName, day, time] is required');
     }
     console.log(`[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`);
-    const users = await hubspot_1.HUBSPOT.getClientDetails({ firstName, lastName, email, phone });
-    if (!users) {
-        console.log(`[Hubspot] no user found`);
+    let ownerId = null;
+    if (!id) {
+        const users = await hubspot_1.HUBSPOT.getClientDetails({ firstName, lastName, email, phone });
+        const user = users?.[0] ?? null;
+        if (!user) {
+            console.log(`[Hubspot] no user found`);
+            return 'no user found';
+        }
+        id = user?.id;
+        ownerId = user?.properties?.hubspot_owner_id ?? null;
     }
-    const user = users?.[0] ?? null;
     const startTime = convertToUTC(day, time, timezone);
     console.log(`[Hubspot] Final UTC timestamp: ${startTime}`);
     if (skipMeeting) {
         console.log(`[Hubspot] Book meeting is false, not booking meeting`);
-        return user;
+        return 'skipping meeting';
     }
     // Book the actual meeting now
     const meetingResponse = await hubspot_1.HUBSPOT.bookMeeting({
@@ -140,7 +146,7 @@ const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, d
         lastName,
         email,
         startTime,
-        ownerId: user?.properties?.hubspot_owner_id ?? undefined,
+        ownerId: ownerId ? ownerId : undefined,
         phone,
     });
     if (!meetingResponse) {

@@ -152,6 +152,7 @@ export const handleBookMeetingInHubspot = async ({
   time,
   timezone,
   skipMeeting,
+  id,
 }: {
   email: string
   phone: string
@@ -161,6 +162,7 @@ export const handleBookMeetingInHubspot = async ({
   time: string
   timezone: string
   skipMeeting?: boolean
+  id?: string
 }) => {
   if (!email || !firstName || !lastName || !day || !time) {
     console.error(`[Hubspot] missing required parameters`)
@@ -171,19 +173,27 @@ export const handleBookMeetingInHubspot = async ({
     `[Hubspot] booking meeting for ${firstName} ${lastName} with email ${email} at ${day} ${time} ${timezone}`,
   )
 
-  const users = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
-  if (!users) {
-    console.log(`[Hubspot] no user found`)
-  }
+  let ownerId = null
 
-  const user = users?.[0] ?? null
+  if (!id) {
+    const users = await HUBSPOT.getClientDetails({ firstName, lastName, email, phone })
+    const user = users?.[0] ?? null
+
+    if (!user) {
+      console.log(`[Hubspot] no user found`)
+      return 'no user found'
+    }
+
+    id = user?.id
+    ownerId = user?.properties?.hubspot_owner_id ?? null
+  }
 
   const startTime = convertToUTC(day, time, timezone)
   console.log(`[Hubspot] Final UTC timestamp: ${startTime}`)
 
   if (skipMeeting) {
     console.log(`[Hubspot] Book meeting is false, not booking meeting`)
-    return user
+    return 'skipping meeting'
   }
 
   // Book the actual meeting now
@@ -192,7 +202,7 @@ export const handleBookMeetingInHubspot = async ({
     lastName,
     email,
     startTime,
-    ownerId: user?.properties?.hubspot_owner_id ?? undefined,
+    ownerId: ownerId ? ownerId : undefined,
     phone,
   })
   if (!meetingResponse) {

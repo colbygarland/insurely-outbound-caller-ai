@@ -8,7 +8,6 @@ import { HUBSPOT } from '../src/hubspot'
 import { ELEVENLABS } from '../src/elevenLabs'
 import { CallEvent } from '../types/twilio'
 import '../instrument.js'
-import { DateTime } from 'luxon'
 
 // Load environment variables from .env file
 dotenv.config()
@@ -29,6 +28,7 @@ const server = createServer()
 const twilioClient = Twilio(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
 const activeCalls: Array<{
+  id?: string
   phone: string
   firstName: string
   lastName: string
@@ -39,7 +39,7 @@ const activeCalls: Array<{
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
-  const { number, email, firstName, lastName, timezone, caller_api_key } = request.body
+  const { number, email, firstName, lastName, timezone, caller_api_key, id } = request.body
 
   if (!caller_api_key || caller_api_key !== process.env.CALLER_API_KEY) {
     return reply.code(401).send({ error: 'Unauthorized' })
@@ -49,7 +49,7 @@ server.post('/outbound-call', async (request, reply) => {
     return reply.code(400).send({ error: 'Phone number is required' })
   }
 
-  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}`
+  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}&id=${encodeURIComponent(id)}`
   const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
   try {
@@ -65,6 +65,7 @@ server.post('/outbound-call', async (request, reply) => {
     })
 
     activeCalls.push({
+      id,
       phone: number,
       firstName,
       lastName,
@@ -96,15 +97,23 @@ server.post('/outbound-call-status', async (request: { body: CallEvent }, reply)
     const call = activeCalls.find(call => call.callSid === request.body.CallSid)
     // tell Hubspot the call didn't land
     if (call) {
-      const user = await HUBSPOT.getClientDetails({
-        firstName: call.firstName,
-        lastName: call.lastName,
-        email: call.email,
-      })
-      if (user?.[0]?.id) {
+      // If we have the ID, we don't need to call and get it from Hubspot
+      let id = call.id
+      let ownerId = null
+      if (!id) {
+        const user = await HUBSPOT.getClientDetails({
+          firstName: call.firstName,
+          lastName: call.lastName,
+          email: call.email,
+        })
+        id = user?.[0]?.id ?? undefined
+        ownerId = user?.[0]?.properties?.hubspot_owner_id ?? null
+      }
+
+      if (id) {
         await HUBSPOT.createEngagement({
-          id: Number(user[0].id),
-          ownerId: Number(user[0].properties.hubspot_owner_id),
+          id: Number(id),
+          ownerId: ownerId ? Number(ownerId) : undefined,
           metadata: {
             body: `<p><strong>[User]</strong> didn't answer the call.</p>`,
             fromNumber: process.env.TWILIO_PHONE_NUMBER!,
@@ -127,10 +136,9 @@ server.post('/outbound-call-status', async (request: { body: CallEvent }, reply)
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
   // @ts-expect-error
-  const { email, firstName, lastName, phone, timezone } = request.query
+  const { email, firstName, lastName, phone, timezone, id } = request.query
   const agent = await ELEVENLABS.getAgent()
-  const currentDay = new Date().toISOString()
-  const prompt = 'Today is ' + currentDay + '. ' + (agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT)
+  const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
   const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
 
   const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
@@ -144,6 +152,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
             <Parameter name="lastName" value="${escapeXML(lastName)}" />
             <Parameter name="phone" value="${escapeXML(phone)}" />
             <Parameter name="timezone" value="${escapeXML(timezone)}" />
+            <Parameter name="id" value="${escapeXML(id)}" />
         </Stream>
         </Connect>
     </Response>`
@@ -168,6 +177,7 @@ server.register(async fastifyInstance => {
       lastName: string
       phone: string
       timezone: string
+      id?: string
     } | null = null // Add this to store parameters
     let callLog = ''
 
@@ -302,26 +312,6 @@ server.register(async fastifyInstance => {
                     console.log(`[Tool Request 1] Book call request received`)
                     console.log(`[Tool Request 1] tool parameters: ${JSON.stringify(toolParameters)}`)
                     break
-                    const bookCallResult = await HUBSPOT.bookMeeting({
-                      firstName: toolParameters.firstName,
-                      lastName: toolParameters.lastName,
-                      email: toolParameters.email,
-                      startTime: toolParameters.startTime,
-                      phone: toolParameters.phone,
-                    })
-                    console.log(`[Tool Request] Book call result: ${JSON.stringify(bookCallResult)}`)
-                    console.log(
-                      `[Tool Request] Sending tool response to ElevenLabs with event ID: ${message.tool_request.event_id}`,
-                    )
-                    const bookCallResponse = {
-                      type: 'tool_response',
-                      event_id: message.tool_request.event_id,
-                      tool_name: 'book_call',
-                      result: bookCallResult,
-                    }
-                    console.log(`[Tool Request] Tool response payload: ${JSON.stringify(bookCallResponse)}`)
-
-                    elevenLabsWs?.send(JSON.stringify(bookCallResponse))
                   }
                 }
                 break
@@ -361,6 +351,7 @@ server.register(async fastifyInstance => {
                     day: toolParameters?.day,
                     time: toolParameters?.time,
                     timezone: customParameters?.timezone!,
+                    id: customParameters?.id,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
                   break
@@ -368,15 +359,22 @@ server.register(async fastifyInstance => {
 
                 if (toolName === TOOLS.createCall) {
                   console.log(`[Tool Request] Create call request received`)
-                  const user = await HUBSPOT.getClientDetails({
-                    firstName: customParameters?.firstName,
-                    lastName: customParameters?.lastName,
-                    email: customParameters?.email,
-                    phone: customParameters?.phone,
-                  })
+                  let id = customParameters?.id
+                  let ownerId = null
+                  if (!id) {
+                    const user = await HUBSPOT.getClientDetails({
+                      firstName: customParameters?.firstName,
+                      lastName: customParameters?.lastName,
+                      email: customParameters?.email,
+                      phone: customParameters?.phone,
+                    })
+                    id = user?.[0]?.id ?? undefined
+                    ownerId = user?.[0]?.properties?.hubspot_owner_id ?? null
+                  }
+
                   const response = await HUBSPOT.createEngagement({
-                    id: Number(user?.[0].id),
-                    ownerId: Number(user?.[0].properties.hubspot_owner_id),
+                    id: Number(id),
+                    ownerId: ownerId ? Number(ownerId) : undefined,
                     metadata: {
                       body: callLog,
                       fromNumber: process.env.TWILIO_PHONE_NUMBER!,
@@ -392,15 +390,21 @@ server.register(async fastifyInstance => {
 
                 if (toolName === TOOLS.noAnswer) {
                   console.log(`[Tool Request] No answer received`)
-                  const user = await HUBSPOT.getClientDetails({
-                    firstName: customParameters?.firstName,
-                    lastName: customParameters?.lastName,
-                    email: customParameters?.email,
-                    phone: customParameters?.phone,
-                  })
+                  let id = customParameters?.id
+                  let ownerId = null
+                  if (!id) {
+                    const user = await HUBSPOT.getClientDetails({
+                      firstName: customParameters?.firstName,
+                      lastName: customParameters?.lastName,
+                      email: customParameters?.email,
+                      phone: customParameters?.phone,
+                    })
+                    id = user?.[0]?.id ?? undefined
+                    ownerId = user?.[0]?.properties?.hubspot_owner_id ?? null
+                  }
                   const response = await HUBSPOT.createEngagement({
-                    id: Number(user?.[0].id),
-                    ownerId: Number(user?.[0].properties.hubspot_owner_id),
+                    id: Number(id),
+                    ownerId: ownerId ? Number(ownerId) : undefined,
                     metadata: {
                       body: "<p><strong>[User]</strong> didn't answer the call.</p>",
                       fromNumber: process.env.TWILIO_PHONE_NUMBER!,
