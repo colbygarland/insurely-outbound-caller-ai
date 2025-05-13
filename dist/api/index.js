@@ -292,14 +292,14 @@ server.register(async (fastifyInstance) => {
                                         day: toolParameters?.day,
                                         time: toolParameters?.time,
                                         timezone: customParameters?.timezone,
-                                        id: customParameters?.id,
+                                        id: undefined, //customParameters?.id,
                                     });
                                     console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`);
                                     break;
                                 }
                                 if (toolName === constants_1.TOOLS.createCall) {
                                     console.log(`[Tool Request] Create call request received`);
-                                    let id = customParameters?.id;
+                                    let id = undefined; // customParameters?.id
                                     let ownerId = null;
                                     if (!id) {
                                         const user = await hubspot_1.HUBSPOT.getClientDetails({
@@ -328,7 +328,7 @@ server.register(async (fastifyInstance) => {
                                 }
                                 if (toolName === constants_1.TOOLS.noAnswer) {
                                     console.log(`[Tool Request] No answer received`);
-                                    let id = customParameters?.id;
+                                    let id = undefined; // customParameters?.id
                                     let ownerId = null;
                                     if (!id) {
                                         const user = await hubspot_1.HUBSPOT.getClientDetails({

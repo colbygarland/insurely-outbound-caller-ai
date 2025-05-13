@@ -351,7 +351,7 @@ server.register(async fastifyInstance => {
                     day: toolParameters?.day,
                     time: toolParameters?.time,
                     timezone: customParameters?.timezone!,
-                    id: customParameters?.id,
+                    id: undefined, //customParameters?.id,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
                   break
@@ -359,7 +359,7 @@ server.register(async fastifyInstance => {
 
                 if (toolName === TOOLS.createCall) {
                   console.log(`[Tool Request] Create call request received`)
-                  let id = customParameters?.id
+                  let id = undefined // customParameters?.id
                   let ownerId = null
                   if (!id) {
                     const user = await HUBSPOT.getClientDetails({
@@ -390,7 +390,7 @@ server.register(async fastifyInstance => {
 
                 if (toolName === TOOLS.noAnswer) {
                   console.log(`[Tool Request] No answer received`)
-                  let id = customParameters?.id
+                  let id = undefined // customParameters?.id
                   let ownerId = null
                   if (!id) {
                     const user = await HUBSPOT.getClientDetails({
