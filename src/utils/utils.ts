@@ -74,6 +74,7 @@ export async function handleTransferCall(
     const agentCall = await twilioClient.calls.create({
       to: forwardPhone,
       from: call.from,
+      callReason: 'Outbound Call',
       twiml: `
         <Response>
           <Say>You are being connected to a caller who was speaking with our AI assistant.</Say>
