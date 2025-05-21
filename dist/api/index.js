@@ -353,6 +353,7 @@ server.register(async (fastifyInstance) => {
                                             durationMilliseconds: 0,
                                         },
                                     });
+                                    console.log(`[Tool Request] No answer received for ${toolParameters.phone}`);
                                     console.log(`[Tool Request] response: ${JSON.stringify(response)}`);
                                     break;
                                 }
