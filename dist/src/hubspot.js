@@ -81,9 +81,10 @@ exports.HUBSPOT = {
             });
             const json = await response.json();
             console.log(`[Hubspot API bookMeeting] json = ${JSON.stringify(json)}`);
-            if (json?.status === 'error') {
+            if (json?.status === 'error' || !json?.calendarEventId) {
                 throw new Error(json);
             }
+            console.log(`[Hubspot API bookMeeting] meeting successfully booked for ${firstName} ${lastName} ${phone} / ${email}`);
             return json;
         }
         catch (error) {
@@ -128,9 +129,10 @@ exports.HUBSPOT = {
             });
             const json = await response.json();
             console.log(`[Hubspot API createEngagement] response = ${JSON.stringify(json)}`);
-            if (json.error) {
+            if (json?.error || !json?.id) {
                 throw new Error(json);
             }
+            console.log(`[Hubspot API createEngagement] engagement successfully created for ${metadata.toNumber}}`);
             return json;
         }
         catch (error) {
