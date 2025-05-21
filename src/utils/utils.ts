@@ -87,7 +87,7 @@ export async function handleTransferCall(
       `,
     })
 
-    console.log(`[Transfer] Outbound call to agent created: ${agentCall.sid}`)
+    console.log(`[Transfer] Outbound call transfer from ${callerNumber} to agent created: ${agentCall.sid}`)
 
     // activeCalls.set(callSid, {
     //   status: 'transferring',
