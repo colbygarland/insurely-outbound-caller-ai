@@ -13,10 +13,23 @@ import '../instrument.js'
 dotenv.config()
 
 // Check for required environment variables
-const { ELEVENLABS_API_KEY, ELEVENLABS_AGENT_ID, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } =
-  process.env
+const {
+  ELEVENLABS_API_KEY,
+  ELEVENLABS_AGENT_ID,
+  ELEVENLABS_AGENT_ID_RENTAL,
+  TWILIO_ACCOUNT_SID,
+  TWILIO_AUTH_TOKEN,
+  TWILIO_PHONE_NUMBER,
+} = process.env
 
-if (!ELEVENLABS_API_KEY || !ELEVENLABS_AGENT_ID || !TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+if (
+  !ELEVENLABS_API_KEY ||
+  !ELEVENLABS_AGENT_ID ||
+  !ELEVENLABS_AGENT_ID_RENTAL ||
+  !TWILIO_ACCOUNT_SID ||
+  !TWILIO_AUTH_TOKEN ||
+  !TWILIO_PHONE_NUMBER
+) {
   console.error('Missing required environment variables')
   throw new Error('Missing required environment variables')
 }
@@ -39,7 +52,7 @@ const activeCalls: Array<{
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
   // @ts-expect-error
-  const { number, email, firstName, lastName, timezone, caller_api_key, id } = request.body
+  const { number, email, firstName, lastName, timezone, caller_api_key, id, call_type } = request.body
 
   if (!caller_api_key || caller_api_key !== process.env.CALLER_API_KEY) {
     return reply.code(401).send({ error: 'Unauthorized' })
@@ -49,7 +62,7 @@ server.post('/outbound-call', async (request, reply) => {
     return reply.code(400).send({ error: 'Phone number is required' })
   }
 
-  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}&id=${encodeURIComponent(id)}`
+  const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}&id=${encodeURIComponent(id)}&call_type=${encodeURIComponent(call_type)}`
   const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`
 
   try {
@@ -138,8 +151,9 @@ server.post('/outbound-call-status', async (request: { body: CallEvent }, reply)
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
   // @ts-expect-error
-  const { email, firstName, lastName, phone, timezone, id } = request.query
-  const agent = await ELEVENLABS.getAgent()
+  const { email, firstName, lastName, phone, timezone, id, call_type } = request.query
+  const agent = await ELEVENLABS.getAgent(call_type)
+  console.log(`[ElevenLabs] using the ${call_type} agent`)
   const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? PROMPT
   const first_message = agent?.conversation_config?.agent?.first_message ?? FIRST_MESSAGE
 
@@ -155,6 +169,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
             <Parameter name="phone" value="${escapeXML(phone)}" />
             <Parameter name="timezone" value="${escapeXML(timezone)}" />
             <Parameter name="id" value="${escapeXML(id)}" />
+            <Parameter name="call_type" value="${escapeXML(call_type)}" />
         </Stream>
         </Connect>
     </Response>`
@@ -189,8 +204,9 @@ server.register(async fastifyInstance => {
     // Set up ElevenLabs connection
     const setupElevenLabs = async () => {
       try {
-        const signedUrl = await getSignedUrl(ELEVENLABS_AGENT_ID, ELEVENLABS_API_KEY)
         const agent = await ELEVENLABS.getAgent()
+        const signedUrl = await getSignedUrl(agent.agent_id, ELEVENLABS_API_KEY)
+
         elevenLabsWs = new WebSocket(signedUrl)
 
         elevenLabsWs.on('open', () => {
