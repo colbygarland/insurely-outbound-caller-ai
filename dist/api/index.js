@@ -15,8 +15,13 @@ require("../instrument.js");
 // Load environment variables from .env file
 dotenv_1.default.config();
 // Check for required environment variables
-const { ELEVENLABS_API_KEY, ELEVENLABS_AGENT_ID, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER } = process.env;
-if (!ELEVENLABS_API_KEY || !ELEVENLABS_AGENT_ID || !TWILIO_ACCOUNT_SID || !TWILIO_AUTH_TOKEN || !TWILIO_PHONE_NUMBER) {
+const { ELEVENLABS_API_KEY, ELEVENLABS_AGENT_ID, ELEVENLABS_AGENT_ID_RENTAL, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER, } = process.env;
+if (!ELEVENLABS_API_KEY ||
+    !ELEVENLABS_AGENT_ID ||
+    !ELEVENLABS_AGENT_ID_RENTAL ||
+    !TWILIO_ACCOUNT_SID ||
+    !TWILIO_AUTH_TOKEN ||
+    !TWILIO_PHONE_NUMBER) {
     console.error('Missing required environment variables');
     throw new Error('Missing required environment variables');
 }
@@ -28,14 +33,14 @@ const activeCalls = [];
 // Route to initiate outbound calls
 server.post('/outbound-call', async (request, reply) => {
     // @ts-expect-error
-    const { number, email, firstName, lastName, timezone, caller_api_key, id } = request.body;
+    const { number, email, firstName, lastName, timezone, caller_api_key, id, call_type } = request.body;
     if (!caller_api_key || caller_api_key !== process.env.CALLER_API_KEY) {
         return reply.code(401).send({ error: 'Unauthorized' });
     }
     if (!number) {
         return reply.code(400).send({ error: 'Phone number is required' });
     }
-    const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}&id=${encodeURIComponent(id)}`;
+    const queryParams = `email=${encodeURIComponent(email)}&firstName=${encodeURIComponent(firstName)}&lastName=${encodeURIComponent(lastName)}&phone=${encodeURIComponent(number)}&timezone=${encodeURIComponent(timezone)}&id=${encodeURIComponent(id)}&call_type=${encodeURIComponent(call_type)}`;
     const url = `https://${request.headers.host}/outbound-call-twiml?${queryParams}`;
     try {
         const call = await twilioClient.calls.create({
@@ -116,8 +121,9 @@ server.post('/outbound-call-status', async (request, reply) => {
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
     // @ts-expect-error
-    const { email, firstName, lastName, phone, timezone, id } = request.query;
-    const agent = await elevenLabs_1.ELEVENLABS.getAgent();
+    const { email, firstName, lastName, phone, timezone, id, call_type } = request.query;
+    const agent = await elevenLabs_1.ELEVENLABS.getAgent(call_type);
+    console.log(`[ElevenLabs] using the ${call_type} agent`);
     const prompt = agent?.conversation_config?.agent?.prompt?.prompt ?? constants_1.PROMPT;
     const first_message = agent?.conversation_config?.agent?.first_message ?? constants_1.FIRST_MESSAGE;
     const twimlResponse = `<?xml version="1.0" encoding="UTF-8"?>
@@ -132,6 +138,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
             <Parameter name="phone" value="${(0, utils_1.escapeXML)(phone)}" />
             <Parameter name="timezone" value="${(0, utils_1.escapeXML)(timezone)}" />
             <Parameter name="id" value="${(0, utils_1.escapeXML)(id)}" />
+            <Parameter name="call_type" value="${(0, utils_1.escapeXML)(call_type)}" />
         </Stream>
         </Connect>
     </Response>`;
@@ -152,8 +159,8 @@ server.register(async (fastifyInstance) => {
         // Set up ElevenLabs connection
         const setupElevenLabs = async () => {
             try {
-                const signedUrl = await (0, utils_1.getSignedUrl)(ELEVENLABS_AGENT_ID, ELEVENLABS_API_KEY);
                 const agent = await elevenLabs_1.ELEVENLABS.getAgent();
+                const signedUrl = await (0, utils_1.getSignedUrl)(agent.agent_id, ELEVENLABS_API_KEY);
                 elevenLabsWs = new ws_1.default(signedUrl);
                 elevenLabsWs.on('open', () => {
                     console.log('[ElevenLabs] Connected to Conversational AI');
