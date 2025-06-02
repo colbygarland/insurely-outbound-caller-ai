@@ -368,7 +368,7 @@ server.register(async fastifyInstance => {
                     phone: customParameters?.phone!,
                     day: toolParameters?.day,
                     time: toolParameters?.time,
-                    timezone: customParameters?.timezone!,
+                    timezone: toolParameters?.timezone ?? customParameters?.timezone!,
                     id: undefined, //customParameters?.id,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
