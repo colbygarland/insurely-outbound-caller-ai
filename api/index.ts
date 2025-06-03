@@ -180,7 +180,7 @@ server.all('/outbound-call-twiml', async (request, reply) => {
 // WebSocket route for handling media streams
 server.register(async fastifyInstance => {
   fastifyInstance.get('/outbound-media-stream', { websocket: true }, async (ws, req) => {
-    console.info('[Server] Twilio connected to outbound media stream')
+    // console.info('[Server] Twilio connected to outbound media stream')
 
     // Variables to track the call
     let streamSid: string | null = null
@@ -210,7 +210,7 @@ server.register(async fastifyInstance => {
         elevenLabsWs = new WebSocket(signedUrl)
 
         elevenLabsWs.on('open', () => {
-          console.log('[ElevenLabs] Connected to Conversational AI')
+          // console.log('[ElevenLabs] Connected to Conversational AI')
 
           // Send initial configuration with prompt and first message
           const initialConfig = {
@@ -241,7 +241,7 @@ server.register(async fastifyInstance => {
 
             switch (message.type) {
               case 'conversation_initiation_metadata':
-                console.log('[ElevenLabs] Received initiation metadata')
+                // console.log('[ElevenLabs] Received initiation metadata')
                 break
 
               case 'audio':
@@ -266,7 +266,7 @@ server.register(async fastifyInstance => {
                     ws.send(JSON.stringify(audioData))
                   }
                 } else {
-                  console.log('[ElevenLabs] Received audio but no StreamSid yet')
+                  // console.log('[ElevenLabs] Received audio but no StreamSid yet')
                 }
                 break
 
@@ -372,6 +372,33 @@ server.register(async fastifyInstance => {
                     id: undefined, //customParameters?.id,
                   })
                   console.log(`[Tool Request] Book call result: ${JSON.stringify(response)}`)
+
+                  let id = undefined // customParameters?.id
+                  let ownerId = null
+                  if (!id) {
+                    const user = await HUBSPOT.getClientDetails({
+                      firstName: customParameters?.firstName,
+                      lastName: customParameters?.lastName,
+                      email: customParameters?.email,
+                      phone: customParameters?.phone,
+                    })
+                    id = user?.[0]?.id ?? undefined
+                    ownerId = user?.[0]?.properties?.hubspot_owner_id ?? null
+                  }
+
+                  const engagementResponse = await HUBSPOT.createEngagement({
+                    id: Number(id),
+                    ownerId: ownerId ? Number(ownerId) : undefined,
+                    metadata: {
+                      body: callLog,
+                      fromNumber: process.env.TWILIO_PHONE_NUMBER!,
+                      toNumber: toolParameters.phone,
+                      status: 'COMPLETED',
+                      recordingUrl: '',
+                      durationMilliseconds: 0,
+                    },
+                  })
+                  console.log(`[Tool Request] Engagement response: ${JSON.stringify(engagementResponse)}`)
                   break
                 }
 
@@ -438,7 +465,7 @@ server.register(async fastifyInstance => {
                 }
 
               default:
-                console.log(`[ElevenLabs] Unhandled message type: ${message.type}`)
+              // console.log(`[ElevenLabs] Unhandled message type: ${message.type}`)
             }
           } catch (error) {
             console.error('[ElevenLabs] Error processing message:', error)
@@ -450,7 +477,7 @@ server.register(async fastifyInstance => {
         })
 
         elevenLabsWs.on('close', () => {
-          console.log('[ElevenLabs] Disconnected')
+          // console.log('[ElevenLabs] Disconnected')
         })
       } catch (error) {
         console.error('[ElevenLabs] Setup error:', error)
@@ -466,7 +493,7 @@ server.register(async fastifyInstance => {
         // @ts-expect-error
         const msg = JSON.parse(message)
         if (msg.event !== 'media') {
-          console.log(`[Twilio] Received event: ${msg.event}`)
+          // console.log(`[Twilio] Received event: ${msg.event}`)
         }
 
         switch (msg.event) {
@@ -474,7 +501,9 @@ server.register(async fastifyInstance => {
             streamSid = msg.start.streamSid
             callSid = msg.start.callSid
             customParameters = msg.start.customParameters // Store parameters
-            console.log(`[Twilio] Stream started - StreamSid: ${streamSid}, CallSid: ${callSid}`)
+            console.log(
+              `[Twilio] Call started with ${customParameters?.firstName} ${customParameters?.lastName} | ${customParameters?.phone} | ${customParameters?.email}`,
+            )
             // console.log('[Twilio] Start parameters:', customParameters)
             // console.log(`[Twilio] msg: ${JSON.stringify(msg)}`)
             break
@@ -489,14 +518,14 @@ server.register(async fastifyInstance => {
             break
 
           case 'stop':
-            console.log(`[Twilio] Stream ${streamSid} ended`)
+            // console.log(`[Twilio] Stream ${streamSid} ended`)
             if (elevenLabsWs?.readyState === WebSocket.OPEN) {
               elevenLabsWs.close()
             }
             break
 
           default:
-            console.log(`[Twilio] Unhandled event: ${msg.event}`)
+          // console.log(`[Twilio] Unhandled event: ${msg.event}`)
         }
       } catch (error) {
         console.error('[Twilio] Error processing message:', error)
@@ -505,7 +534,7 @@ server.register(async fastifyInstance => {
 
     // Handle WebSocket closure
     ws.on('close', () => {
-      console.log('[Twilio] Client disconnected')
+      // console.log('[Twilio] Client disconnected')
       if (elevenLabsWs?.readyState === WebSocket.OPEN) {
         elevenLabsWs.close()
       }

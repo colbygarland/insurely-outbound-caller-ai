@@ -140,6 +140,7 @@ export function convertToUTC(day: string, time: string, timezone: string): strin
   console.log(`[Timezone Debug] UTC time: ${utc.toString()}`)
   console.log(`[Timezone Debug] Local milli: ${local.toMillis()}`)
   console.log(`[Timezone Debug] UTC milli: ${utc.toMillis()}`)
+  console.log(`[Timezone Debug] Timezone: ${timezone}`)
 
   return utc.toString()
 }

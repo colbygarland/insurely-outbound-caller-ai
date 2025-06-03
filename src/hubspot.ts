@@ -113,7 +113,7 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with bookMeeting(): ${JSON.stringify(error)}`)
-      return null
+      throw error
     }
   },
   createEngagement: async ({

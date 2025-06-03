@@ -116,6 +116,7 @@ function convertToUTC(day, time, timezone) {
     console.log(`[Timezone Debug] UTC time: ${utc.toString()}`);
     console.log(`[Timezone Debug] Local milli: ${local.toMillis()}`);
     console.log(`[Timezone Debug] UTC milli: ${utc.toMillis()}`);
+    console.log(`[Timezone Debug] Timezone: ${timezone}`);
     return utc.toString();
 }
 const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, day, time, timezone, skipMeeting, id, }) => {

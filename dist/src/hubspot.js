@@ -89,7 +89,7 @@ exports.HUBSPOT = {
         }
         catch (error) {
             console.error(`[Hubspot API] error with bookMeeting(): ${JSON.stringify(error)}`);
-            return null;
+            throw error;
         }
     },
     createEngagement: async ({ id, metadata, ownerId, }) => {

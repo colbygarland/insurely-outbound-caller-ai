@@ -2,3 +2,5 @@
 .env
 # Sentry Config File
 .sentryclirc
+*/bruno.json
+*/*.bru
