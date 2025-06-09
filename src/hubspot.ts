@@ -1,6 +1,7 @@
 import { Client } from '@hubspot/api-client'
 import { FilterOperatorEnum } from '@hubspot/api-client/lib/codegen/crm/contacts'
 import { HubspotUser } from '../types/hubspot'
+import * as Sentry from '@sentry/node'
 
 const hubspotClient = new Client({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN })
 
@@ -113,6 +114,7 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with bookMeeting(): ${JSON.stringify(error)}`)
+      Sentry.captureException(error)
       throw error
     }
   },
@@ -175,6 +177,7 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with createEngagement(): ${JSON.stringify(error)}`)
+      Sentry.captureException(error)
       return null
     }
   },
@@ -193,6 +196,7 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with getAvailableMeetingTimes(): ${JSON.stringify(error)}`)
+      Sentry.captureException(error)
       return null
     }
   },
@@ -210,6 +214,7 @@ export const HUBSPOT = {
       return json
     } catch (error) {
       console.error(`[Hubspot API] error with getMeetingLinks(): ${JSON.stringify(error)}`)
+      Sentry.captureException(error)
       return null
     }
   },
