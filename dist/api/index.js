@@ -530,12 +530,15 @@ server.all('/hubspot', async (request) => {
 });
 server.get('/hubspot/get-available-meeting-times', async (request) => {
     console.log(`[Hubspot] Getting available meeting times`);
-    const { timezone } = request.query;
+    const { timezone, raw } = request.query;
     const response = await hubspot_1.HUBSPOT.getAvailableMeetingTimes({ timezone });
     if (!response) {
         return [];
     }
     const times = response['linkAvailability']?.['linkAvailabilityByDuration']?.['1800000']?.['availabilities'];
+    if (raw) {
+        return times;
+    }
     const formattedTimes = times.map((time) => {
         const startDate = new Date(time.startMillisUtc);
         return startDate.toLocaleString('en-US', {

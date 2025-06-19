@@ -100,6 +100,7 @@ export const HUBSPOT = {
       ],
       ...(ownerId ? { likelyAvailableUserIds: [ownerId] } : {}),
     }
+    console.log(`[Hubspot API bookMeeting] body = ${JSON.stringify(body)}`)
     try {
       const response = await hubspotClient.apiRequest({
         method: 'POST',

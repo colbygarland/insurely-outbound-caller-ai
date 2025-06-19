@@ -195,6 +195,7 @@ server.register(async fastifyInstance => {
       phone: string
       timezone: string
       id?: string
+      call_type: string
     } | null = null // Add this to store parameters
     let callLog = ''
 
@@ -623,12 +624,17 @@ server.all('/hubspot', async (request: any) => {
 
 server.get('/hubspot/get-available-meeting-times', async (request: any) => {
   console.log(`[Hubspot] Getting available meeting times`)
-  const { timezone } = request.query
+  const { timezone, raw } = request.query
   const response = await HUBSPOT.getAvailableMeetingTimes({ timezone })
   if (!response) {
     return []
   }
   const times = response['linkAvailability']?.['linkAvailabilityByDuration']?.['1800000']?.['availabilities']
+
+  if (raw) {
+    return times
+  }
+
   const formattedTimes = times.map((time: any) => {
     const startDate = new Date(time.startMillisUtc)
 
