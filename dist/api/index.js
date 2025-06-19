@@ -35,7 +35,7 @@ server.post('/outbound-call', async (request, reply) => {
     // @ts-expect-error
     const { number, email, firstName, lastName, timezone, caller_api_key, id, call_type } = request.body;
     if (!caller_api_key || caller_api_key !== process.env.CALLER_API_KEY) {
-        return reply.code(401).send({ error: 'Unauthorized' });
+        //return reply.code(401).send({ error: 'Unauthorized' })
     }
     if (!number) {
         return reply.code(400).send({ error: 'Phone number is required' });
@@ -516,7 +516,6 @@ server.all('/incoming-call-eleven', async (request, reply) => {
 server.all('/hubspot', async (request) => {
     console.log(`[Hubspot] testing hubspot`);
     const { phone, email, firstName, lastName, day, time, timezone, skipMeeting } = request.body;
-    //const response = await HUBSPOT.getAvailableMeetingTimes({ timezone: 'America/Edmonton' })
     const response = await (0, utils_1.handleBookMeetingInHubspot)({
         email,
         phone,
@@ -528,6 +527,28 @@ server.all('/hubspot', async (request) => {
         skipMeeting,
     });
     return response;
+});
+server.get('/hubspot/get-available-meeting-times', async (request) => {
+    console.log(`[Hubspot] Getting available meeting times`);
+    const { timezone } = request.query;
+    const response = await hubspot_1.HUBSPOT.getAvailableMeetingTimes({ timezone });
+    if (!response) {
+        return [];
+    }
+    const times = response['linkAvailability']?.['linkAvailabilityByDuration']?.['1800000']?.['availabilities'];
+    const formattedTimes = times.map((time) => {
+        const startDate = new Date(time.startMillisUtc);
+        return startDate.toLocaleString('en-US', {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            timeZoneName: 'short',
+        });
+    });
+    return formattedTimes;
 });
 server.get('/debug-sentry', () => {
     console.log('.log');

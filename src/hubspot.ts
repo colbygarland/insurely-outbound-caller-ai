@@ -71,13 +71,15 @@ export const HUBSPOT = {
     email,
     ownerId,
     phone,
+    timezone,
   }: {
     firstName: string
     lastName: string
-    startTime: string // 2025-05-09T20:58:00.000Z
+    startTime: number // JS unix timestamp
     email: string
     ownerId?: string // the owner of the contact in Hubspot, might be empty
     phone: string
+    timezone: string
   }) => {
     // https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
     const body = {
@@ -87,6 +89,7 @@ export const HUBSPOT = {
       consented: true,
       startTime, // JS unix timestamp
       locale: 'en-us',
+      timezone,
       slug: process.env.HUBSPOT_MEETING_SLUG,
       email,
       formFields: [
@@ -187,10 +190,11 @@ export const HUBSPOT = {
         method: 'GET',
         path: `/scheduler/v3/meetings/meeting-links/book/${encodeURIComponent(process.env.HUBSPOT_MEETING_SLUG!)}?timezone=${timezone}`,
       })
-      console.log(`[Hubspot API getAvailableMeetingTimes] response = ${JSON.stringify(response)}`)
+      // console.log(`[Hubspot API getAvailableMeetingTimes] response = ${JSON.stringify(response)}`)
       const json = await response.json()
-      console.log(`[Hubspot API getAvailableMeetingTimes] json = ${JSON.stringify(json)}`)
+      // console.log(`[Hubspot API getAvailableMeetingTimes] json = ${JSON.stringify(json)}`)
       if (json.error) {
+        console.error(`[Hubspot API] error with getAvailableMeetingTimes(): ${JSON.stringify(json)}`)
         throw new Error(json)
       }
       return json

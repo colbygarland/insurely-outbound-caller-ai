@@ -88,7 +88,7 @@ exports.HUBSPOT = {
             return null;
         }
     },
-    bookMeeting: async ({ firstName, lastName, startTime, email, ownerId, phone, }) => {
+    bookMeeting: async ({ firstName, lastName, startTime, email, ownerId, phone, timezone, }) => {
         // https://developers.hubspot.com/docs/reference/api/library/meetings#post-%2Fscheduler%2Fv3%2Fmeetings%2Fmeeting-links%2Fbook
         const body = {
             duration: 1800000, // 30 minutes
@@ -97,6 +97,7 @@ exports.HUBSPOT = {
             consented: true,
             startTime, // JS unix timestamp
             locale: 'en-us',
+            timezone,
             slug: process.env.HUBSPOT_MEETING_SLUG,
             email,
             formFields: [
@@ -182,10 +183,11 @@ exports.HUBSPOT = {
                 method: 'GET',
                 path: `/scheduler/v3/meetings/meeting-links/book/${encodeURIComponent(process.env.HUBSPOT_MEETING_SLUG)}?timezone=${timezone}`,
             });
-            console.log(`[Hubspot API getAvailableMeetingTimes] response = ${JSON.stringify(response)}`);
+            // console.log(`[Hubspot API getAvailableMeetingTimes] response = ${JSON.stringify(response)}`)
             const json = await response.json();
-            console.log(`[Hubspot API getAvailableMeetingTimes] json = ${JSON.stringify(json)}`);
+            // console.log(`[Hubspot API getAvailableMeetingTimes] json = ${JSON.stringify(json)}`)
             if (json.error) {
+                console.error(`[Hubspot API] error with getAvailableMeetingTimes(): ${JSON.stringify(json)}`);
                 throw new Error(json);
             }
             return json;
