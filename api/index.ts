@@ -646,6 +646,7 @@ server.get('/hubspot/get-available-meeting-times', async (request: any) => {
       hour: '2-digit',
       minute: '2-digit',
       timeZoneName: 'short',
+      timeZone: timezone || 'America/Edmonton',
     })
   })
   return formattedTimes
