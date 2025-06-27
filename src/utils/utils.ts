@@ -214,3 +214,36 @@ export const handleBookMeetingInHubspot = async ({
 
   return meetingResponse
 }
+
+export const sendTranscriptForValidation = async ({
+  message,
+  phone,
+  email,
+  firstName,
+  lastName,
+}: {
+  message: string
+  phone: string
+  email: string
+  firstName: string
+  lastName: string
+}) => {
+  const response = await fetch(process.env.CONVERSATION_API_URL!, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      message,
+      phone,
+      email,
+      first_name: firstName,
+      last_name: lastName,
+      caller_api_key: process.env.CONVERSATION_API_KEY,
+    }),
+  })
+  console.log(`[Conversation] response = ${JSON.stringify(response)}`)
+  const data = await response.json()
+  console.log(`[Conversation] data = ${JSON.stringify(data)}`)
+  return data
+}

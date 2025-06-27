@@ -1,7 +1,13 @@
 import Twilio from 'twilio'
 import WebSocket from 'ws'
 import dotenv from 'dotenv'
-import { escapeXML, getSignedUrl, handleBookMeetingInHubspot, handleTransferCall } from '../src/utils/utils'
+import {
+  escapeXML,
+  getSignedUrl,
+  handleBookMeetingInHubspot,
+  handleTransferCall,
+  sendTranscriptForValidation,
+} from '../src/utils/utils'
 import { FIRST_MESSAGE, PORT, PROMPT, TOOLS } from '../src/constants'
 import { createServer } from '../src/server'
 import { HUBSPOT } from '../src/hubspot'
@@ -136,6 +142,10 @@ server.post('/outbound-call-status', async (request: { body: CallEvent }, reply)
             recordingUrl: '',
             durationMilliseconds: 0,
             status: 'COMPLETED',
+            firstName: call.firstName,
+            lastName: call.lastName,
+            email: call.email,
+            phone: call.phone,
           },
         })
       }
@@ -397,6 +407,10 @@ server.register(async fastifyInstance => {
                       status: 'COMPLETED',
                       recordingUrl: '',
                       durationMilliseconds: 0,
+                      firstName: customParameters?.firstName || '',
+                      lastName: customParameters?.lastName || '',
+                      email: customParameters?.email || '',
+                      phone: customParameters?.phone || '',
                     },
                   })
                   console.log(`[Tool Request] Engagement response: ${JSON.stringify(engagementResponse)}`)
@@ -428,6 +442,10 @@ server.register(async fastifyInstance => {
                       status: 'COMPLETED',
                       recordingUrl: '',
                       durationMilliseconds: 0,
+                      firstName: customParameters?.firstName || '',
+                      lastName: customParameters?.lastName || '',
+                      email: customParameters?.email || '',
+                      phone: customParameters?.phone || '',
                     },
                   })
                   console.log(`[Tool Request] response: ${JSON.stringify(response)}`)
@@ -458,6 +476,10 @@ server.register(async fastifyInstance => {
                       status: 'COMPLETED',
                       recordingUrl: '',
                       durationMilliseconds: 0,
+                      firstName: customParameters?.firstName || '',
+                      lastName: customParameters?.lastName || '',
+                      email: customParameters?.email || '',
+                      phone: customParameters?.phone || '',
                     },
                   })
                   console.log(`[Tool Request] No answer received for ${toolParameters.phone}`)
@@ -656,4 +678,19 @@ server.get('/debug-sentry', () => {
   console.log('.log')
   console.error('.error')
   throw new Error('testing Sentry')
+})
+
+server.post('/debug-conversation', async (request: any) => {
+  console.log(`[Conversation] testing conversation`)
+  const { message, phone, email, firstName, lastName } = request.body
+  const response = await sendTranscriptForValidation({
+    message,
+    phone,
+    email,
+    firstName,
+    lastName,
+  })
+  console.log(`[Conversation] response = ${JSON.stringify(response)}`)
+
+  return response
 })

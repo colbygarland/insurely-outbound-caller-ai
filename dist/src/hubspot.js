@@ -37,6 +37,7 @@ exports.HUBSPOT = void 0;
 const api_client_1 = require("@hubspot/api-client");
 const contacts_1 = require("@hubspot/api-client/lib/codegen/crm/contacts");
 const Sentry = __importStar(require("@sentry/node"));
+const utils_1 = require("./utils/utils");
 const hubspotClient = new api_client_1.Client({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN });
 exports.HUBSPOT = {
     getClientDetails: async ({ firstName, lastName, email, phone, }) => {
@@ -158,25 +159,40 @@ exports.HUBSPOT = {
                 },
             ],
         };
+        let json = null;
         try {
             const response = await hubspotClient.apiRequest({
                 method: 'POST',
                 path: '/crm/v3/objects/calls',
                 body,
             });
-            const json = await response.json();
+            json = await response.json();
             console.log(`[Hubspot API createEngagement] response = ${JSON.stringify(json)}`);
             if (json?.error || !json?.id) {
                 throw new Error(json);
             }
             console.log(`[Hubspot API createEngagement] engagement successfully created for ${metadata.toNumber}}`);
-            return json;
         }
         catch (error) {
             console.error(`[Hubspot API] error with createEngagement(): ${JSON.stringify(error)}`);
             Sentry.captureException(error);
-            return null;
         }
+        // Send the transcript for validation
+        try {
+            const response = await (0, utils_1.sendTranscriptForValidation)({
+                message: metadata.body,
+                phone: metadata.phone,
+                email: metadata.email,
+                firstName: metadata.firstName,
+                lastName: metadata.lastName,
+            });
+            console.log(`[Conversation API] response = ${JSON.stringify(response)}`);
+        }
+        catch (error) {
+            console.error(`[Conversation API] error with sendTranscriptForValidation(): ${JSON.stringify(error)}`);
+            Sentry.captureException(error);
+        }
+        return json;
     },
     getAvailableMeetingTimes: async ({ timezone }) => {
         try {

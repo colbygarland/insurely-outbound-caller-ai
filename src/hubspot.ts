@@ -2,6 +2,7 @@ import { Client } from '@hubspot/api-client'
 import { FilterOperatorEnum } from '@hubspot/api-client/lib/codegen/crm/contacts'
 import { HubspotUser } from '../types/hubspot'
 import * as Sentry from '@sentry/node'
+import { sendTranscriptForValidation } from './utils/utils'
 
 const hubspotClient = new Client({ accessToken: process.env.HUBSPOT_ACCESS_TOKEN })
 
@@ -136,6 +137,10 @@ export const HUBSPOT = {
       durationMilliseconds: number
       recordingUrl: string
       body: string
+      firstName: string
+      lastName: string
+      email: string
+      phone: string
     }
   }) => {
     const timestamp = Date.now()
@@ -166,24 +171,40 @@ export const HUBSPOT = {
         },
       ],
     }
+    let json = null
     try {
       const response = await hubspotClient.apiRequest({
         method: 'POST',
         path: '/crm/v3/objects/calls',
         body,
       })
-      const json = await response.json()
+      json = await response.json()
       console.log(`[Hubspot API createEngagement] response = ${JSON.stringify(json)}`)
       if (json?.error || !json?.id) {
         throw new Error(json)
       }
       console.log(`[Hubspot API createEngagement] engagement successfully created for ${metadata.toNumber}}`)
-      return json
     } catch (error) {
       console.error(`[Hubspot API] error with createEngagement(): ${JSON.stringify(error)}`)
       Sentry.captureException(error)
-      return null
     }
+
+    // Send the transcript for validation
+    try {
+      const response = await sendTranscriptForValidation({
+        message: metadata.body,
+        phone: metadata.phone,
+        email: metadata.email,
+        firstName: metadata.firstName,
+        lastName: metadata.lastName,
+      })
+      console.log(`[Conversation API] response = ${JSON.stringify(response)}`)
+    } catch (error) {
+      console.error(`[Conversation API] error with sendTranscriptForValidation(): ${JSON.stringify(error)}`)
+      Sentry.captureException(error)
+    }
+
+    return json
   },
   getAvailableMeetingTimes: async ({ timezone }: { timezone: string }) => {
     try {

@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.handleBookMeetingInHubspot = exports.escapeXML = void 0;
+exports.sendTranscriptForValidation = exports.handleBookMeetingInHubspot = exports.escapeXML = void 0;
 exports.getSignedUrl = getSignedUrl;
 exports.handleTransferCall = handleTransferCall;
 exports.convertToUTC = convertToUTC;
@@ -158,3 +158,24 @@ const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, d
     return meetingResponse;
 };
 exports.handleBookMeetingInHubspot = handleBookMeetingInHubspot;
+const sendTranscriptForValidation = async ({ message, phone, email, firstName, lastName, }) => {
+    const response = await fetch(process.env.CONVERSATION_API_URL, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            message,
+            phone,
+            email,
+            first_name: firstName,
+            last_name: lastName,
+            caller_api_key: process.env.CONVERSATION_API_KEY,
+        }),
+    });
+    console.log(`[Conversation] response = ${JSON.stringify(response)}`);
+    const data = await response.json();
+    console.log(`[Conversation] data = ${JSON.stringify(data)}`);
+    return data;
+};
+exports.sendTranscriptForValidation = sendTranscriptForValidation;
