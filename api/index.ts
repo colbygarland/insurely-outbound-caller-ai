@@ -201,8 +201,11 @@ server.register(async fastifyInstance => {
           try {
             // @ts-expect-error
             const message = JSON.parse(data)
-            console.log(`[ElevenLabs] Received message: ${JSON.stringify(message)}`)
-            conversationId = message.conversation_initiation_metadata_event.conversation_id
+            // console.log(`[ElevenLabs] Received message: ${JSON.stringify(message)}`)
+            if (message?.conversation_initiation_metadata_event?.conversation_id) {
+              conversationId = message?.conversation_initiation_metadata_event?.conversation_id
+              console.log(`[ElevenLabs] Conversation ID: ${conversationId}`)
+            }
 
             switch (message.type) {
               case 'conversation_initiation_metadata':
