@@ -185,6 +185,7 @@ exports.HUBSPOT = {
                 email: metadata.email,
                 firstName: metadata.firstName,
                 lastName: metadata.lastName,
+                conversationId: metadata.conversationId,
             });
             console.log(`[Conversation API] response = ${JSON.stringify(response)}`);
         }

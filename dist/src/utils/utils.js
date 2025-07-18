@@ -158,7 +158,7 @@ const handleBookMeetingInHubspot = async ({ email, phone, firstName, lastName, d
     return meetingResponse;
 };
 exports.handleBookMeetingInHubspot = handleBookMeetingInHubspot;
-const sendTranscriptForValidation = async ({ message, phone, email, firstName, lastName, }) => {
+const sendTranscriptForValidation = async ({ message, phone, email, firstName, lastName, conversationId, }) => {
     const response = await fetch(process.env.CONVERSATION_API_URL, {
         method: 'POST',
         headers: {
@@ -171,6 +171,7 @@ const sendTranscriptForValidation = async ({ message, phone, email, firstName, l
             first_name: firstName,
             last_name: lastName,
             caller_api_key: process.env.CONVERSATION_API_KEY,
+            conversation_id: conversationId,
         }),
     });
     console.log(`[Conversation] response = ${JSON.stringify(response)}`);

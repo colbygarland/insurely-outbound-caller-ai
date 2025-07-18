@@ -77,51 +77,6 @@ server.post('/outbound-call', async (request, reply) => {
         });
     }
 });
-// @ts-expect-error
-server.post('/outbound-call-status', async (request, reply) => {
-    const { CallStatus } = request.body;
-    if (CallStatus === 'no-answer') {
-        console.log(`[Twilio] Call status: ${CallStatus}`);
-        const call = activeCalls.find(call => call.callSid === request.body.CallSid);
-        // tell Hubspot the call didn't land
-        if (call) {
-            // If we have the ID, we don't need to call and get it from Hubspot
-            let id = call.id;
-            let ownerId = null;
-            if (!id) {
-                const user = await hubspot_1.HUBSPOT.getClientDetails({
-                    firstName: call.firstName,
-                    lastName: call.lastName,
-                    email: call.email,
-                });
-                id = user?.[0]?.id ?? undefined;
-                ownerId = user?.[0]?.properties?.hubspot_owner_id ?? null;
-            }
-            if (id) {
-                await hubspot_1.HUBSPOT.createEngagement({
-                    id: Number(id),
-                    ownerId: ownerId ? Number(ownerId) : undefined,
-                    metadata: {
-                        body: `<p><strong>[User]</strong> didn't answer the call.</p>`,
-                        fromNumber: process.env.TWILIO_PHONE_NUMBER,
-                        toNumber: call.phone,
-                        recordingUrl: '',
-                        durationMilliseconds: 0,
-                        status: 'COMPLETED',
-                        firstName: call.firstName,
-                        lastName: call.lastName,
-                        email: call.email,
-                        phone: call.phone,
-                    },
-                });
-            }
-        }
-        reply.send({
-            success: true,
-            message: 'Call not answered',
-        });
-    }
-});
 // TwiML route for outbound calls
 server.all('/outbound-call-twiml', async (request, reply) => {
     // @ts-expect-error
@@ -156,6 +111,7 @@ server.register(async (fastifyInstance) => {
         let streamSid = null;
         let callSid = null;
         let elevenLabsWs = null;
+        let conversationId = null;
         let customParameters = null; // Add this to store parameters
         let callLog = '';
         // Handle WebSocket errors
@@ -191,6 +147,8 @@ server.register(async (fastifyInstance) => {
                     try {
                         // @ts-expect-error
                         const message = JSON.parse(data);
+                        console.log(`[ElevenLabs] Received message: ${JSON.stringify(message)}`);
+                        conversationId = message.conversation_initiation_metadata_event.conversation_id;
                         switch (message.type) {
                             case 'conversation_initiation_metadata':
                                 // console.log('[ElevenLabs] Received initiation metadata')
@@ -333,6 +291,7 @@ server.register(async (fastifyInstance) => {
                                             lastName: customParameters?.lastName || '',
                                             email: customParameters?.email || '',
                                             phone: customParameters?.phone || '',
+                                            conversationId: conversationId || '',
                                         },
                                     });
                                     console.log(`[Tool Request] Engagement response: ${JSON.stringify(engagementResponse)}`);
@@ -366,6 +325,7 @@ server.register(async (fastifyInstance) => {
                                             lastName: customParameters?.lastName || '',
                                             email: customParameters?.email || '',
                                             phone: customParameters?.phone || '',
+                                            conversationId: conversationId || '',
                                         },
                                     });
                                     console.log(`[Tool Request] response: ${JSON.stringify(response)}`);
@@ -399,6 +359,7 @@ server.register(async (fastifyInstance) => {
                                             lastName: customParameters?.lastName || '',
                                             email: customParameters?.email || '',
                                             phone: customParameters?.phone || '',
+                                            conversationId: conversationId || '',
                                         },
                                     });
                                     console.log(`[Tool Request] No answer received for ${toolParameters.phone}`);
@@ -577,13 +538,14 @@ server.get('/debug-sentry', () => {
 });
 server.post('/debug-conversation', async (request) => {
     console.log(`[Conversation] testing conversation`);
-    const { message, phone, email, firstName, lastName } = request.body;
+    const { message, phone, email, firstName, lastName, conversationId } = request.body;
     const response = await (0, utils_1.sendTranscriptForValidation)({
         message,
         phone,
         email,
         firstName,
         lastName,
+        conversationId,
     });
     console.log(`[Conversation] response = ${JSON.stringify(response)}`);
     return response;

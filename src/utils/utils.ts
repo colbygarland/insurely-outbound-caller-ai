@@ -221,12 +221,14 @@ export const sendTranscriptForValidation = async ({
   email,
   firstName,
   lastName,
+  conversationId,
 }: {
   message: string
   phone: string
   email: string
   firstName: string
   lastName: string
+  conversationId: string
 }) => {
   const response = await fetch(process.env.CONVERSATION_API_URL!, {
     method: 'POST',
@@ -240,6 +242,7 @@ export const sendTranscriptForValidation = async ({
       first_name: firstName,
       last_name: lastName,
       caller_api_key: process.env.CONVERSATION_API_KEY,
+      conversation_id: conversationId,
     }),
   })
   console.log(`[Conversation] response = ${JSON.stringify(response)}`)

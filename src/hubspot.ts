@@ -141,6 +141,7 @@ export const HUBSPOT = {
       lastName: string
       email: string
       phone: string
+      conversationId: string
     }
   }) => {
     const timestamp = Date.now()
@@ -197,6 +198,7 @@ export const HUBSPOT = {
         email: metadata.email,
         firstName: metadata.firstName,
         lastName: metadata.lastName,
+        conversationId: metadata.conversationId,
       })
       console.log(`[Conversation API] response = ${JSON.stringify(response)}`)
     } catch (error) {
